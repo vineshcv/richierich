@@ -1,0 +1,45 @@
+Upload these files/folders with FileZilla (overwrite).
+Base local path: /Applications/MAMP/htdocs/richierich/
+Base server path: public_html/richierich/
+
+REQUIRED
+--------
+app/Providers/AppServiceProvider.php
+app/Services/ProductService.php
+app/Services/CatalogService.php
+app/Services/CategoryService.php
+app/Models/Category.php
+app/Http/Controllers/Admin/ProductController.php
+app/Http/Controllers/Admin/BannerController.php
+app/Http/Controllers/Admin/CategoryController.php
+app/Http/Requests/Product/UpdateProductRequest.php
+app/Http/Requests/Category/StoreCategoryRequest.php
+app/Http/Requests/Category/UpdateCategoryRequest.php
+app/Http/Requests/Banner/StoreBannerRequest.php
+app/Http/Requests/Banner/UpdateBannerRequest.php
+routes/web.php
+resources/views/layouts/admin.blade.php
+resources/views/admin/auth/login.blade.php
+resources/views/admin/dashboard.blade.php
+resources/views/admin/products/index.blade.php
+resources/views/admin/products/form.blade.php
+resources/views/admin/banners/index.blade.php
+resources/views/admin/categories/index.blade.php
+resources/views/admin/categories/form.blade.php
+resources/views/admin/settings/edit.blade.php
+
+ALSO TO public_html/ (web root, NOT inside richierich/)
+----------------------------------------------------
+public/assets/admin.css  →  public_html/assets/admin.css
+
+ALSO CREATE ON SERVER (empty folders if missing)
+-----------------------------------------------
+public_html/storage/
+public_html/storage/products/
+public_html/storage/banners/
+public_html/storage/categories/
+
+Then hard-refresh admin and test:
+- Products → Edit → set primary / delete / upload new
+- Categories → Edit → upload image
+- Banners → Save with new image

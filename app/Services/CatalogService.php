@@ -1,0 +1,305 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Category;
+use App\Models\Product;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
+class CatalogService
+{
+    /** @var array<string, mixed>|null */
+    private ?array $catalogJson = null;
+
+    public function __construct(
+        private SettingService $settings,
+    ) {
+    }
+
+    /**
+     * Build dress_data.js–compatible payload for the storefront JS.
+     *
+     * @return array{categories: list<array>, products: list<array>, combos: list<array>, season: list<array>}
+     */
+    public function frontendCatalog(): array
+    {
+        $settings = $this->settings->get();
+        $storeName = $settings->store_name ?: 'Richie Rich Boutique';
+
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->where('slug', '!=', 'specials')
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get()
+            ->map(function (Category $c) {
+                $id = $this->normalizeCategoryId($c->slug);
+                $fallback = $this->catalogImageForCategory($id) ?? $this->catalogImageForCategory($c->slug);
+
+                return [
+                    'id' => $id,
+                    'name' => $c->name,
+                    'desc' => $c->description ?: '',
+                    'image' => $this->mediaUrl($c->image_path, $fallback),
+                ];
+            })
+            ->values()
+            ->all();
+
+        // Ensure all catalog JSON categories appear even if DB seed missed some
+        $categories = $this->mergeMissingCategories($categories);
+
+        $products = Product::query()
+            ->with(['category', 'images'])
+            ->where('status', 'active')
+            ->latest()
+            ->get()
+            ->map(fn (Product $p) => $this->mapProduct($p, $storeName))
+            ->values()
+            ->all();
+
+        $static = $this->staticOffers();
+
+        return [
+            'categories' => $categories,
+            'products' => $products,
+            'combos' => $static['combos'],
+            'season' => $static['season'],
+        ];
+    }
+
+    private function mapProduct(Product $product, string $storeName): array
+    {
+        $fallback = $this->catalogImageForProduct($product->slug);
+
+        $images = $product->images
+            ->map(fn ($img) => $this->mediaUrl($img->path, $fallback))
+            ->values()
+            ->all();
+
+        $primaryPath = $product->primaryImage()?->path;
+        $primary = $this->mediaUrl($primaryPath, $fallback);
+        if (! $images) {
+            $images = [$primary];
+        }
+
+        $tags = is_array($product->tags) ? $product->tags : [];
+        $tag = $tags[0] ?? ($product->category?->name ?? '');
+
+        $price = '';
+        if ($product->show_price && $product->price !== null) {
+            $price = '₹'.number_format((float) $product->price, 0, '.', ',');
+        }
+
+        $specs = [];
+        if ($product->fabric) {
+            $specs[] = ['Fabric', $product->fabric];
+        }
+        if ($product->fit) {
+            $specs[] = ['Fit', $product->fit];
+        }
+        if ($product->designer) {
+            $specs[] = ['Designer', $product->designer];
+        }
+        if (is_array($product->colors) && $product->colors) {
+            $specs[] = ['Colors', implode(', ', $product->colors)];
+        }
+        if (is_array($product->available_sizes) && $product->available_sizes) {
+            $specs[] = ['Sizes', implode(', ', $product->available_sizes)];
+        }
+        if ($product->sku) {
+            $specs[] = ['SKU', $product->sku];
+        }
+
+        $bullets = array_values(array_filter([
+            $product->fabric,
+            $product->fit,
+            is_array($product->available_sizes) && $product->available_sizes
+                ? 'Sizes: '.implode(', ', $product->available_sizes)
+                : null,
+            $tag ?: null,
+        ]));
+
+        $short = $product->description
+            ? \Illuminate\Support\Str::limit(strip_tags($product->description), 110)
+            : ($product->category?->name ?? '');
+
+        $categoryId = $this->normalizeCategoryId($product->category?->slug ?? 'western');
+
+        return [
+            'id' => $product->slug,
+            'name' => $product->name,
+            'brand' => $storeName,
+            'category' => $categoryId,
+            'tag' => $tag,
+            'price' => $price,
+            'image' => $primary,
+            'gallery' => $images,
+            'short' => $short,
+            'description' => $product->description ?: $short,
+            'bullets' => $bullets ?: [$short],
+            'specs' => $specs ?: [['Type', $product->category?->name ?? 'Dress']],
+            'sizes' => is_array($product->available_sizes) ? array_values($product->available_sizes) : [],
+            'colors' => is_array($product->colors) ? array_values($product->colors) : [],
+            'url' => url('/product/'.$product->slug),
+            'wa' => $product->name,
+            'care' => $product->care_instructions,
+        ];
+    }
+
+    /**
+     * Prefer admin/storage uploads; fall back to public_html/assets seed images.
+     */
+    private function mediaUrl(?string $path, ?string $fallbackBasename = null): string
+    {
+        if ($path) {
+            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+                return $path;
+            }
+
+            $relative = ltrim(explode('?', $path)[0], '/');
+            if (Storage::disk('public')->exists($relative)) {
+                return Storage::disk('public')->url($relative);
+            }
+        }
+
+        $candidates = [];
+        if ($path) {
+            $candidates[] = basename(explode('?', $path)[0]);
+        }
+        if ($fallbackBasename) {
+            $candidates[] = basename(explode('?', $fallbackBasename)[0]);
+        }
+
+        foreach ($candidates as $base) {
+            if ($base && $this->webAssetExists($base)) {
+                return asset('assets/'.$base);
+            }
+        }
+
+        return asset('assets/dress_logo.png');
+    }
+
+    private function webAssetExists(string $base): bool
+    {
+        $base = basename(explode('?', $base)[0]);
+
+        // Normal Laravel: project/public/assets
+        if (is_file(public_path('assets/'.$base))) {
+            return true;
+        }
+
+        // FileZilla layout: public_html/assets + public_html/richierich (app)
+        if (is_file(base_path('../assets/'.$base))) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function normalizeCategoryId(?string $slug): string
+    {
+        $slug = strtolower(trim((string) $slug));
+
+        return match ($slug) {
+            'anti-tarnish', 'anti_tarnish', 'antitarnishjewellery' => 'antitarnish',
+            default => $slug !== '' ? $slug : 'western',
+        };
+    }
+
+    private function catalogImageForProduct(string $slug): ?string
+    {
+        foreach ($this->catalog()['products'] ?? [] as $item) {
+            if (($item['id'] ?? '') === $slug) {
+                $img = $item['image'] ?? ($item['gallery'][0] ?? null);
+
+                return $img ? basename(explode('?', $img)[0]) : null;
+            }
+        }
+
+        return null;
+    }
+
+    private function catalogImageForCategory(string $id): ?string
+    {
+        foreach ($this->catalog()['categories'] ?? [] as $item) {
+            $itemId = $this->normalizeCategoryId($item['id'] ?? '');
+            if ($itemId === $this->normalizeCategoryId($id) || ($item['id'] ?? '') === $id) {
+                $img = $item['image'] ?? null;
+
+                return $img ? basename(explode('?', $img)[0]) : null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $categories
+     * @return list<array<string, mixed>>
+     */
+    private function mergeMissingCategories(array $categories): array
+    {
+        $have = [];
+        foreach ($categories as $c) {
+            $have[$c['id']] = true;
+        }
+
+        foreach ($this->catalog()['categories'] ?? [] as $item) {
+            $id = $this->normalizeCategoryId($item['id'] ?? '');
+            if ($id === '' || isset($have[$id])) {
+                continue;
+            }
+            $img = isset($item['image']) ? basename(explode('?', $item['image'])[0]) : null;
+            $categories[] = [
+                'id' => $id,
+                'name' => $item['name'] ?? $id,
+                'desc' => $item['desc'] ?? '',
+                'image' => $this->mediaUrl(null, $img),
+            ];
+            $have[$id] = true;
+        }
+
+        return $categories;
+    }
+
+    /**
+     * @return array{combos: list<array>, season: list<array>}
+     */
+    private function staticOffers(): array
+    {
+        $data = $this->catalog();
+
+        return [
+            'combos' => array_map(fn ($item) => $this->mapOffer($item), $data['combos'] ?? []),
+            'season' => array_map(fn ($item) => $this->mapOffer($item), $data['season'] ?? []),
+        ];
+    }
+
+    private function mapOffer(array $item): array
+    {
+        $image = isset($item['image']) ? basename(explode('?', $item['image'])[0]) : null;
+
+        return array_merge($item, [
+            'image' => $this->mediaUrl(null, $image),
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function catalog(): array
+    {
+        if ($this->catalogJson !== null) {
+            return $this->catalogJson;
+        }
+
+        $path = database_path('seeders/dress_catalog.json');
+        if (! File::exists($path)) {
+            return $this->catalogJson = [];
+        }
+
+        return $this->catalogJson = json_decode(File::get($path), true) ?: [];
+    }
+}
