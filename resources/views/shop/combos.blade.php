@@ -1,7 +1,7 @@
 @extends('layouts.shop')
 
 @section('dress_page', 'more')
-@section('title', 'Sets — '.($settings->store_name ?? 'Richie Rich').' Boutique')
+@section('title', 'Sets — Richierich')
 
 @section('content')
 <section class="page-hero">

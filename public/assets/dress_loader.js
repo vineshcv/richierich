@@ -1,5 +1,6 @@
 (function () {
-  var LOADER_MIN_MS = 550;
+  var isHome = document.documentElement.getAttribute("data-loader") === "1";
+  var LOADER_MIN_MS = 2400;
   var STYLE_ID = "dress-boot-style";
   var ROOT_ID = "dress-boot";
 
@@ -15,32 +16,24 @@
       "}" +
       "#" + ROOT_ID + ".is-done{opacity:0;visibility:hidden;pointer-events:none;}" +
       "#" + ROOT_ID + " .dress-boot-inner{" +
-      "display:flex;flex-direction:column;align-items:center;gap:1.2rem;" +
-      "animation:dress-boot-rise .85s cubic-bezier(.22,1,.36,1) both;" +
+      "display:flex;flex-direction:column;align-items:center;gap:.7rem;" +
       "}" +
       "#" + ROOT_ID + " .dress-boot-logo{" +
-      "width:min(240px,62vw);height:auto;display:block;" +
-      "animation:dress-boot-pulse 1.7s ease-in-out infinite;" +
-      "filter:drop-shadow(0 6px 18px rgba(139,30,45,.18));" +
-      "}" +
-      "#" + ROOT_ID + " .dress-boot-ring{" +
-      "width:42px;height:42px;border-radius:999px;" +
-      "border:2px solid rgba(139,30,45,.25);" +
-      "border-top-color:#8b1e2d;" +
-      "animation:dress-boot-spin .85s linear infinite;" +
+      "width:72px;height:72px;display:block;object-fit:contain;" +
+      "animation:dress-boot-in .7s ease both,dress-boot-pulse 1.4s ease .7s infinite;" +
       "}" +
       "#" + ROOT_ID + " .dress-boot-text{" +
       "margin:0;font-family:Arial,Helvetica,sans-serif;" +
-      "font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;" +
-      "color:#8b1e2d;font-weight:600;" +
-      "animation:dress-boot-fade 1.4s ease-in-out infinite;" +
+      "font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;" +
+      "color:#8b1e2d;font-weight:600;opacity:0;" +
+      "animation:dress-boot-fade .5s ease .35s forwards;" +
       "}" +
-      "@keyframes dress-boot-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}" +
-      "@keyframes dress-boot-pulse{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.04);opacity:1}}" +
-      "@keyframes dress-boot-spin{to{transform:rotate(360deg)}}" +
-      "@keyframes dress-boot-fade{0%,100%{opacity:.4}50%{opacity:.95}}" +
+      "@keyframes dress-boot-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}" +
+      "@keyframes dress-boot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}" +
+      "@keyframes dress-boot-fade{from{opacity:0}to{opacity:1}}" +
       "@media (prefers-reduced-motion:reduce){" +
-      "#" + ROOT_ID + " .dress-boot-logo,#" + ROOT_ID + " .dress-boot-ring,#" + ROOT_ID + " .dress-boot-text{animation:none!important}" +
+      "#" + ROOT_ID + " .dress-boot-logo{animation:none}" +
+      "#" + ROOT_ID + " .dress-boot-text{animation:none;opacity:1}" +
       "}";
     (document.head || document.documentElement).appendChild(style);
   }
@@ -55,10 +48,10 @@
     var loader = document.createElement("div");
     loader.id = ROOT_ID;
     loader.setAttribute("aria-hidden", "true");
+    var mark = (window.DRESS_CONFIG && window.DRESS_CONFIG.mark) || "assets/dress_mark.png";
     loader.innerHTML =
       '<div class="dress-boot-inner">' +
-      '<img class="dress-boot-logo" src="' + ((window.DRESS_CONFIG && window.DRESS_CONFIG.logo) || "assets/dress_logo.png") + '" alt="Richie Rich Boutique" />' +
-      '<div class="dress-boot-ring" aria-hidden="true"></div>' +
+      '<img class="dress-boot-logo" src="' + mark + '" alt="" />' +
       '<p class="dress-boot-text">Loading</p>' +
       "</div>";
     (document.body || document.documentElement).appendChild(loader);
@@ -80,6 +73,18 @@
       var legacy = document.getElementById("page-loader");
       if (legacy && legacy.parentNode) legacy.parentNode.removeChild(legacy);
     }, 520);
+  }
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register((window.DRESS_CONFIG && window.DRESS_CONFIG.sw) || "./sw.js").catch(function () {
+        /* ignore registration errors (e.g. file://) */
+      });
+    });
+  }
+
+  if (!isHome) {
+    return;
   }
 
   document.documentElement.classList.add("dress-loading", "is-loading");
@@ -104,14 +109,6 @@
   if (document.readyState === "complete") finish();
   else {
     window.addEventListener("load", finish);
-    setTimeout(finish, 2200);
-  }
-
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register((window.DRESS_CONFIG && window.DRESS_CONFIG.sw) || "./sw.js").catch(function () {
-        /* ignore registration errors (e.g. file://) */
-      });
-    });
+    setTimeout(finish, 4200);
   }
 })();

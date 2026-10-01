@@ -1,6 +1,6 @@
-/* Richie Rich Boutique */
+/* Richierich */
 
-const WHATSAPP_NUMBER = (window.DRESS_CONFIG && window.DRESS_CONFIG.whatsapp) || "919447836797";
+const WHATSAPP_NUMBER = (window.DRESS_CONFIG && window.DRESS_CONFIG.whatsapp) || "";
 
 function dressRoute(key) {
   var routes = (window.DRESS_CONFIG && window.DRESS_CONFIG.routes) || {};
@@ -50,13 +50,35 @@ const WA_ICON =
 const SHARE_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>';
 
+const HEART_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20s-7-4.4-7-9a4 4 0 017-2 4 4 0 017 2c0 4.6-7 9-7 9z"/></svg>';
+
 const DETAIL_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
 
 const CART_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>';
 
+function productStock(product) {
+  if (!product || product.stock === null || product.stock === undefined || product.stock === "") return null;
+  var n = parseInt(product.stock, 10);
+  return isNaN(n) ? null : n;
+}
+
+function stockLabel(product) {
+  var stock = productStock(product);
+  if (stock === null) return { text: "In Stock", cls: "" };
+  if (stock <= 0) return { text: "Out of stock", cls: " is-out" };
+  var threshold = parseInt(product.stock_threshold, 10);
+  if (!isNaN(threshold) && stock <= threshold) return { text: "Only " + stock + " left", cls: " is-low" };
+  return { text: "In Stock", cls: "" };
+}
+
 function cartActionBtn(id, large) {
+  var product = window.getDressProduct ? getDressProduct(id) : null;
+  if (productStock(product) === 0) {
+    return '<span class="shop-out">Out of stock</span>';
+  }
   if (large) {
     return (
       '<button type="button" class="icon-action icon-action-lg icon-action-cart" data-add-cart="' +
@@ -76,7 +98,7 @@ function cartActionBtn(id, large) {
 }
 
 window.AZORES_SHARE = {
-  siteName: (window.DRESS_CONFIG && window.DRESS_CONFIG.siteName) || "Richie Rich Boutique",
+  siteName: (window.DRESS_CONFIG && window.DRESS_CONFIG.siteName) || "Richierich",
   productPage: dressRoute("shop"),
   defaultImage: (window.DRESS_CONFIG && window.DRESS_CONFIG.defaultImage) || "assets/dress_prod-red-saree.png",
   getProduct: function (id) {
@@ -96,22 +118,23 @@ window.AZORES_SHARE = {
 
 var pendingAction = null;
 
-function buildWaUrl(message) {
+function buildWaUrl(message, number) {
+  var phone = String(number || WHATSAPP_NUMBER || "").replace(/\D+/g, "");
   return (
     "https://wa.me/" +
-    WHATSAPP_NUMBER +
+    phone +
     "?text=" +
-    encodeURIComponent(message || "Hi Richie Rich Boutique, I want to enquire about a dress.")
+    encodeURIComponent(message || "Hi Richierich, I want to enquire about a dress.")
   );
 }
 
-function openWhatsApp(message) {
-  window.open(buildWaUrl(message), "_blank", "noopener,noreferrer");
+function openWhatsApp(message, number) {
+  window.open(buildWaUrl(message, number), "_blank", "noopener,noreferrer");
 }
 
 function buildProductEnquiry(name, price, extra) {
   var lines = [
-    "Hi Richie Rich Boutique,",
+    "Hi Richierich,",
     "",
     "I'm interested in:",
     "",
@@ -136,16 +159,18 @@ function enquireWhatsApp(opts) {
   opts = opts || {};
   var name = opts.label || "";
   var price = "";
+  var phone = "";
   var pid = opts.productId || "";
   if (pid && window.getDressProduct) {
     var p = getDressProduct(pid);
     if (p) {
       name = p.name || name;
       price = p.price || "";
+      phone = p.whatsapp || "";
     }
   }
   var msg = buildProductEnquiry(name, price, opts.baseMessage && opts.baseMessage !== name ? opts.baseMessage : "");
-  openWhatsApp(msg);
+  openWhatsApp(msg, phone);
 }
 
 function wireDirectWhatsAppLinks() {
@@ -275,7 +300,7 @@ function wireNav() {
 }
 
 function collectFormMessage(form, title) {
-  var lines = [title || "Hi Richie Rich Boutique,"];
+  var lines = [title || "Hi Richierich,"];
   new FormData(form).forEach(function (value, key) {
     if (String(value).trim()) lines.push(key + ": " + value);
   });
@@ -286,7 +311,7 @@ function wireFormsToWhatsApp() {
   document.querySelectorAll("form[data-wa-form]").forEach(function (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var title = form.getAttribute("data-wa-form") || "Hi Richie Rich Boutique,";
+      var title = form.getAttribute("data-wa-form") || "Hi Richierich,";
       openWhatsApp(collectFormMessage(form, title));
     });
   });
@@ -548,7 +573,7 @@ function buildEnquiryMessage(productName, extraNote) {
     "",
     "I'm interested in:",
     "",
-    "🛒 " + (productName || "Richie Rich Boutique products"),
+    "🛒 " + (productName || "Richierich products"),
     "",
     "Could you please confirm:",
     "• Availability",
@@ -665,7 +690,7 @@ function wireActionInterceptors() {
   );
 }
 
-function productCardHtml(p) {
+function productCardHtml(p, home) {
   var pid = encodeURIComponent(p.id);
   var url = productDetailUrl(p.id);
   var name = p.name.replace(/"/g, "&quot;");
@@ -687,7 +712,9 @@ function productCardHtml(p) {
     '<button type="button" class="share-icon-btn" data-share="' +
     p.id +
     '" aria-label="Share" title="Share">' +
-    SHARE_ICON +
+    (home
+      ? '<span class="home-heart-ico">' + HEART_ICON + '</span><span class="home-share-ico">' + SHARE_ICON + "</span>"
+      : SHARE_ICON) +
     "</button>" +
     (p.price ? '<div class="shop-price">' + p.price + "</div>" : "") +
     "</div>" +
@@ -711,15 +738,6 @@ function productCardHtml(p) {
     '" aria-label="View" title="View">' +
     DETAIL_ICON +
     "</a>" +
-    '<a class="shop-icon-action shop-icon-wa" data-wa="' +
-    p.wa.replace(/"/g, "&quot;") +
-    '" data-product="' +
-    p.id +
-    '" data-label="' +
-    name +
-    '" href="#" aria-label="WhatsApp" title="WhatsApp enquire">' +
-    WA_ICON +
-    "</a>" +
     cartActionBtn(p.id) +
     "</div></div></article>"
   );
@@ -732,12 +750,17 @@ function categoryCardHtml(cat) {
     '">' +
     '<span class="category-card-media"><img src="' +
     cat.image +
-    '" alt="" loading="lazy" /></span>' +
-    "<span><strong>" +
+    '" alt="' +
+    cat.name +
+    '" loading="lazy" /></span>' +
+    '<span class="category-card-foot">' +
+    '<span class="category-card-copy"><strong>' +
     cat.name +
     "</strong><span>" +
     cat.desc +
-    "</span></span></a>"
+    "</span></span>" +
+    '<span class="category-card-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></span>' +
+    "</span></a>"
   );
 }
 
@@ -759,7 +782,14 @@ function initCategoryCarousel() {
   var rail = document.getElementById("category-grid");
   var prev = document.getElementById("category-prev");
   var next = document.getElementById("category-next");
-  if (!rail) return;
+  if (!rail || rail.getAttribute("data-carousel") === "1") return;
+  var count = rail.children.length;
+  if (count < 2) return;
+  rail.setAttribute("data-carousel", "1");
+
+  Array.prototype.forEach.call(Array.prototype.slice.call(rail.children), function (card) {
+    rail.appendChild(card.cloneNode(true));
+  });
 
   function step() {
     var card = rail.querySelector(".category-card");
@@ -769,33 +799,52 @@ function initCategoryCarousel() {
     return card.getBoundingClientRect().width + gap;
   }
 
-  function updateButtons() {
-    if (!prev || !next) return;
-    var max = rail.scrollWidth - rail.clientWidth - 2;
-    var canScroll = max > 2;
-    prev.hidden = !canScroll;
-    next.hidden = !canScroll;
-    if (!canScroll) return;
-    prev.disabled = rail.scrollLeft <= 2;
-    next.disabled = rail.scrollLeft >= max;
-    prev.style.opacity = prev.disabled ? "0.35" : "1";
-    next.style.opacity = next.disabled ? "0.35" : "1";
+  function loopWidth() {
+    return step() * count;
+  }
+
+  function wrap() {
+    var width = loopWidth();
+    if (width <= 0) return;
+    if (rail.scrollLeft >= width - 1) {
+      rail.scrollLeft = rail.scrollLeft - width;
+    }
+  }
+
+  function go(dir) {
+    if (dir < 0 && rail.scrollLeft <= 1) {
+      rail.scrollLeft = loopWidth();
+    }
+    rail.scrollBy({ left: dir * step(), behavior: "smooth" });
   }
 
   if (prev) {
-    prev.addEventListener("click", function () {
-      rail.scrollBy({ left: -step(), behavior: "smooth" });
-    });
+    prev.hidden = false;
+    prev.addEventListener("click", function () { go(-1); });
   }
   if (next) {
-    next.addEventListener("click", function () {
-      rail.scrollBy({ left: step(), behavior: "smooth" });
-    });
+    next.hidden = false;
+    next.addEventListener("click", function () { go(1); });
   }
 
-  rail.addEventListener("scroll", updateButtons, { passive: true });
-  window.addEventListener("resize", updateButtons);
-  updateButtons();
+  rail.addEventListener("scrollend", wrap);
+  rail.addEventListener("scroll", function () {
+    if (rail.scrollLeft >= loopWidth()) wrap();
+  }, { passive: true });
+
+  var paused = false;
+  var root = rail.closest(".category-carousel") || rail;
+  root.addEventListener("mouseenter", function () { paused = true; });
+  root.addEventListener("mouseleave", function () { paused = false; });
+  root.addEventListener("pointerdown", function () { paused = true; });
+  root.addEventListener("pointerup", function () {
+    window.setTimeout(function () { paused = false; }, 2800);
+  });
+
+  window.setInterval(function () {
+    if (document.hidden || paused) return;
+    go(1);
+  }, 3200);
 }
 
 function initBannerRail() {
@@ -854,19 +903,38 @@ function initBannerRail() {
     goTo(parseInt(btn.getAttribute("data-banner-dot"), 10) || 0);
   });
 
-  var timer = setInterval(function () {
-    if (document.hidden) return;
-    var next = (activeIndex() + 1) % cards.length;
-    goTo(next);
-  }, 4200);
+  var timer = null;
+
+  function fitsAll() {
+    return rail.scrollWidth <= rail.clientWidth + 8;
+  }
+
+  function startAuto() {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+    if (fitsAll()) {
+      setDots(cards.length > 2 ? 1 : 0);
+      return;
+    }
+    timer = setInterval(function () {
+      if (document.hidden || fitsAll()) return;
+      var next = (activeIndex() + 1) % cards.length;
+      goTo(next);
+    }, 4200);
+  }
 
   rail.addEventListener(
     "pointerdown",
     function () {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
     },
     { once: true }
   );
+
+  window.addEventListener("resize", startAuto);
+  startAuto();
 }
 
 function packageCardHtml(c, detailFallback) {
@@ -968,7 +1036,12 @@ function wireComboIncludesToggle() {
 function renderHome() {
   var cats = document.getElementById("category-grid");
   if (cats && window.DRESS_CATEGORIES) {
-    cats.innerHTML = DRESS_CATEGORIES.map(categoryCardHtml).join("");
+    var cards = DRESS_CATEGORIES.filter(function (cat) {
+      return (window.DRESS_PRODUCTS || []).some(function (p) {
+        return p.category === cat.id;
+      });
+    });
+    cats.innerHTML = cards.map(categoryCardHtml).join("");
     initCategoryCarousel();
   }
   var combos = document.getElementById("combo-grid");
@@ -985,7 +1058,7 @@ function renderHome() {
   }
 
   var host = document.getElementById("home-category-sections");
-  if (host && window.DRESS_CATEGORIES && window.DRESS_PRODUCTS) {
+  if (host && document.body.getAttribute("data-dress-page") === "home" && window.DRESS_CATEGORIES && window.DRESS_PRODUCTS) {
     var productPage =
       (window.AZORES_SHARE && AZORES_SHARE.productPage) || dressRoute("shop");
     host.innerHTML = DRESS_CATEGORIES.map(function (cat, index) {
@@ -993,7 +1066,7 @@ function renderHome() {
         return p.category === cat.id;
       });
       if (!items.length) return "";
-      var sectionClass = "section" + (index % 2 === 0 ? " alt" : "");
+      var sectionClass = "section home-cat-section" + (index % 2 === 1 ? " is-white" : "");
       return (
         '<section class="' +
         sectionClass +
@@ -1010,14 +1083,14 @@ function renderHome() {
         cat.name +
         "</h2>" +
         "</div>" +
-        '<a class="btn btn-outline" href="' +
+        '<a class="btn btn-primary home-view-all" href="' +
         productPage +
         "?cat=" +
         encodeURIComponent(cat.id) +
-        '">View all</a>' +
+        '">View all <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></svg></a>' +
         "</div>" +
         '<div class="shop-grid">' +
-        items.slice(0, 8).map(productCardHtml).join("") +
+        items.slice(0, 4).map(function (item) { return productCardHtml(item, true); }).join("") +
         "</div>" +
         "</div>" +
         "</section>"
@@ -1473,16 +1546,9 @@ function renderRelatedProducts(product) {
     .filter(function (p) {
       return p.id !== product.id && p.category === product.category;
     })
-    .slice(0, 8);
-  if (!list.length) {
-    list = (window.DRESS_PRODUCTS || [])
-      .filter(function (p) {
-        return p.id !== product.id;
-      })
-      .slice(0, 4);
-  }
+    .slice(0, 4);
   grid.innerHTML = list.length
-    ? list.map(productCardHtml).join("")
+    ? list.map(function (item) { return productCardHtml(item, true); }).join("")
     : '<p class="muted">More products will show here.</p>';
 }
 
@@ -1499,7 +1565,7 @@ function renderProductDetailPage(id) {
   var gallery = productGallery(product);
   var name = product.name.replace(/"/g, "&quot;");
   var thumbs =
-    gallery.length > 1
+    gallery.length > 0
       ? '<div class="detail-thumbs">' +
         gallery
           .map(function (src, i) {
@@ -1516,83 +1582,185 @@ function renderProductDetailPage(id) {
           .join("") +
         "</div>"
       : "";
-  var bullets = (product.bullets || [])
-    .map(function (b) {
-      return "<li>" + b + "</li>";
+  var specMap = {};
+  (product.specs || []).forEach(function (row) {
+    if (row && row[0]) specMap[row[0]] = row[1];
+  });
+  var sizeList = (product.sizes && product.sizes.length ? product.sizes : ["S", "M", "L", "XL"]).slice();
+  var sizeBtns = sizeList
+    .map(function (s, i) {
+      return (
+        '<button type="button" class="detail-size' +
+        (i === 0 ? " is-active" : "") +
+        '">' +
+        String(s).replace(/</g, "&lt;") +
+        "</button>"
+      );
     })
     .join("");
-  var specs = (product.specs || [])
-    .map(function (row) {
-      return "<li><span>" + row[0] + "</span><span>" + row[1] + "</span></li>";
-    })
-    .join("");
-  var colors = (product.colors || [])
-    .map(function (c) {
-      return '<span class="shop-tag">' + String(c).replace(/</g, "&lt;") + "</span>";
-    })
-    .join("");
-  var sizes = (product.sizes || [])
-    .map(function (s) {
-      return '<span class="shop-tag">' + String(s).replace(/</g, "&lt;") + "</span>";
-    })
-    .join("");
+  var brand = product.brand || "Richierich";
+  var sku = specMap.SKU || "";
+  var pageUrl = product.url || window.location.href;
+  var shareText = encodeURIComponent(product.name + (product.price ? " — " + product.price : "") + " " + pageUrl);
+  function detailText(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;");
+  }
+  var leadRaw = String(product.description || product.short || "").replace(/<[^>]+>/g, "").trim();
+  var lead =
+    leadRaw && leadRaw.toLowerCase() !== String(product.name || "").trim().toLowerCase()
+      ? '<p class="detail-lead">' + detailText(leadRaw) + "</p>"
+      : "";
+  var facts = [];
+  if (specMap.Fabric) facts.push(["Fabric", specMap.Fabric]);
+  if (specMap.Designer && String(specMap.Designer).toLowerCase() !== String(brand).toLowerCase()) {
+    facts.push(["Designer", specMap.Designer]);
+  }
+  if (specMap.Fit) facts.push(["Fit", specMap.Fit]);
+  if (specMap.Colors) facts.push(["Colors", specMap.Colors]);
+  if (sku) facts.push(["SKU", sku]);
+  if (product.care) facts.push(["Care", product.care]);
+  var factsHtml = facts.length
+    ? '<dl class="detail-facts">' +
+      facts
+        .map(function (row) {
+          return "<div><dt>" + detailText(row[0]) + "</dt><dd>" + detailText(row[1]) + "</dd></div>";
+        })
+        .join("") +
+      "</dl>"
+    : "";
 
   root.innerHTML =
     '<article class="detail-layout">' +
     '<div class="detail-gallery">' +
+    thumbs +
     '<div class="detail-main"><button type="button" class="detail-zoom" aria-label="Zoom image">' +
     '<img id="detail-main-img" src="' +
     (gallery[0] || product.image) +
     '" alt="' +
     name +
-    '" /><span class="detail-zoom-hint">Zoom</span></button></div>' +
-    thumbs +
-    "</div>" +
+    '" /></button>' +
+    '<button type="button" class="detail-zoom-btn" aria-label="Zoom">⤢</button>' +
+    (gallery.length > 1
+      ? '<button type="button" class="detail-nav prev" aria-label="Previous image">‹</button><button type="button" class="detail-nav next" aria-label="Next image">›</button>'
+      : "") +
+    "</div></div>" +
     '<div class="detail-copy">' +
-    (product.brand ? '<p class="dress-sheet-brand">' + product.brand + "</p>" : "") +
+    '<p class="detail-brand">' +
+    detailText(brand) +
+    "</p>" +
     "<h1>" +
-    product.name +
+    detailText(product.name) +
     "</h1>" +
-    (product.tag ? '<p class="shop-tag">' + product.tag + "</p>" : "") +
-    (product.price ? '<div class="detail-price">' + product.price + "</div>" : "") +
-    '<div class="detail-lead">' +
-    (product.description || product.short || "") +
+    lead +
+    '<div class="detail-buybox">' +
+    '<div class="detail-price-row">' +
+    (product.price ? '<div class="detail-price">' + detailText(product.price) + "</div>" : "") +
+    '<span class="detail-stock' + stockLabel(product).cls + '">' + stockLabel(product).text + "</span>" +
     "</div>" +
-    (colors ? '<p class="detail-care"><strong>Colors</strong><br>' + colors + "</p>" : "") +
-    (sizes ? '<p class="detail-care"><strong>Sizes</strong><br>' + sizes + "</p>" : "") +
-    (bullets ? '<ul class="detail-bullets">' + bullets + "</ul>" : "") +
-    (specs ? '<ul class="spec-table">' + specs + "</ul>" : "") +
-    (product.care ? '<p class="detail-care"><strong>Care</strong><br>' + product.care + "</p>" : "") +
-    '<div class="detail-actions">' +
-    '<a class="icon-action icon-action-lg icon-action-wa" data-wa="' +
-    (product.wa || "").replace(/"/g, "&quot;") +
-    '" data-product="' +
-    product.id +
-    '" data-label="' +
-    name +
-    '" href="#" aria-label="WhatsApp" title="WhatsApp enquire">' +
+    '<div class="detail-size-head"><span>Sizes</span><button type="button" class="detail-size-guide">Size guide</button></div>' +
+    '<div class="detail-sizes">' +
+    sizeBtns +
+    "</div>" +
+    '<p class="detail-size-note" hidden>Available in ' +
+    detailText(sizeList.join(", ")) +
+    ". Message us if you need help with fit.</p>" +
+    '<div class="detail-buy">' +
+    (productStock(product) === 0
+      ? '<button type="button" class="btn btn-primary detail-add" disabled>Out of stock</button>'
+      : '<div class="detail-qty"><button type="button" data-qty-step="-1" aria-label="Decrease quantity">−</button>' +
+        '<input id="detail-qty" value="1" readonly />' +
+        '<button type="button" data-qty-step="1" aria-label="Increase quantity">+</button></div>' +
+        '<button type="button" class="btn btn-primary detail-add" data-add-cart="' +
+        product.id +
+        '">' +
+        CART_ICON +
+        " Add to Cart</button>") +
+    '<button type="button" class="detail-wish" aria-label="Save" aria-pressed="false">' +
+    HEART_ICON +
+    "</button></div>" +
+    '<p class="detail-assure">Easy shipping · Hassle-free returns</p>' +
+    "</div>" +
+    factsHtml +
+    '<div class="detail-share"><span>Share</span>' +
+    '<a class="detail-share-btn is-wa" href="https://wa.me/?text=' +
+    shareText +
+    '" target="_blank" rel="noopener" aria-label="Share on WhatsApp">' +
     WA_ICON +
     "</a>" +
-    cartActionBtn(product.id, true) +
-    '<button type="button" class="icon-action icon-action-lg" data-share="' +
-    product.id +
-    '" aria-label="Share" title="Share">' +
-    SHARE_ICON +
-    "</button>" +
-    '<a class="btn btn-outline" href="' +
-    dressRoute("contact") +
-    '">Contact</a>' +
+    '<a class="detail-share-btn" href="https://www.facebook.com/sharer/sharer.php?u=' +
+    encodeURIComponent(pageUrl) +
+    '" target="_blank" rel="noopener" aria-label="Share on Facebook">f</a>' +
+    '<button type="button" class="detail-share-btn" data-copy-link aria-label="Copy link">🔗</button>' +
     "</div></div></article>";
 
-  root.querySelectorAll(".detail-thumb").forEach(function (btn) {
+  var imgEl = document.getElementById("detail-main-img");
+  var thumbBtns = [].slice.call(root.querySelectorAll(".detail-thumb"));
+  var galleryIndex = 0;
+  function showGallery(i) {
+    if (!gallery.length || !imgEl) return;
+    galleryIndex = (i + gallery.length) % gallery.length;
+    imgEl.src = gallery[galleryIndex];
+    thumbBtns.forEach(function (b, n) {
+      b.classList.toggle("is-active", n === galleryIndex);
+    });
+  }
+  thumbBtns.forEach(function (btn, i) {
     btn.addEventListener("click", function () {
-      var main = document.getElementById("detail-main-img");
-      if (main) main.src = btn.getAttribute("data-src");
-      root.querySelectorAll(".detail-thumb").forEach(function (b) {
+      showGallery(i);
+    });
+  });
+  var prev = root.querySelector(".detail-nav.prev");
+  var next = root.querySelector(".detail-nav.next");
+  if (prev) prev.addEventListener("click", function () { showGallery(galleryIndex - 1); });
+  if (next) next.addEventListener("click", function () { showGallery(galleryIndex + 1); });
+  var zoomBtn = root.querySelector(".detail-zoom-btn");
+  if (zoomBtn) {
+    zoomBtn.addEventListener("click", function () {
+      openZoomLightbox(gallery, galleryIndex);
+    });
+  }
+  root.querySelectorAll(".detail-size").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      root.querySelectorAll(".detail-size").forEach(function (b) {
         b.classList.toggle("is-active", b === btn);
       });
     });
   });
+  var guide = root.querySelector(".detail-size-guide");
+  var note = root.querySelector(".detail-size-note");
+  if (guide && note) {
+    guide.addEventListener("click", function () {
+      note.hidden = !note.hidden;
+    });
+  }
+  root.querySelectorAll("[data-qty-step]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var input = document.getElementById("detail-qty");
+      if (!input) return;
+      var nextQty = Math.max(1, (parseInt(input.value, 10) || 1) + parseInt(btn.getAttribute("data-qty-step"), 10));
+      var maxStock = productStock(product);
+      if (maxStock !== null) nextQty = Math.min(maxStock, nextQty);
+      input.value = String(Math.max(1, nextQty));
+    });
+  });
+  var wish = root.querySelector(".detail-wish");
+  if (wish) {
+    wish.addEventListener("click", function () {
+      var on = wish.getAttribute("aria-pressed") === "true";
+      wish.setAttribute("aria-pressed", on ? "false" : "true");
+    });
+  }
+  var copyBtn = root.querySelector("[data-copy-link]");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(pageUrl);
+      }
+    });
+  }
 
   bindDetailZoom(root, gallery);
   renderRelatedProducts(product);

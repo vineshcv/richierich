@@ -17,7 +17,10 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@richierich.test'],
             [
                 'name' => 'Admin',
+                'username' => 'admin',
                 'password' => Hash::make('password'),
+                'role' => 'superadmin',
+                'status' => 'active',
             ]
         );
 

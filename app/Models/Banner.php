@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 class Banner extends Model
 {
     protected $fillable = [
+        'store_id',
         'title',
         'image_path',
         'link_url',

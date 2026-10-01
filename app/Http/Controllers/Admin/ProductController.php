@@ -7,6 +7,7 @@ use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\CategoryService;
+use App\Services\CurrentStore;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class ProductController extends Controller
     public function __construct(
         private ProductService $products,
         private CategoryService $categories,
+        private CurrentStore $current,
     ) {
     }
 
@@ -45,6 +47,8 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
+        abort_unless($this->current->owns($product), 404);
+
         return view('admin.products.form', [
             'product' => $product->load('images'),
             'categories' => $this->categories->search(),
@@ -53,6 +57,8 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
+        abort_unless($this->current->owns($product), 404);
+
         $payload = $request->safe()->except('images');
         $payload['remove_image_ids'] = $request->input('remove_image_ids', []);
         $payload['primary_image_id'] = $request->input('primary_image_id');
@@ -65,6 +71,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
+        abort_unless($this->current->owns($product), 404);
+
         $this->products->delete($product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted.');

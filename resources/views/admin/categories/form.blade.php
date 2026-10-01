@@ -4,7 +4,7 @@
 
 @section('title', $isEdit ? 'Edit category' : 'Add category')
 @section('heading', $isEdit ? 'Edit category' : 'Add category')
-@section('subheading', 'Category name and image used on the storefront')
+@section('subheading', 'Categories are shared. If this name already exists, add products under it.')
 @section('actions')
   <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">Back</a>
 @endsection

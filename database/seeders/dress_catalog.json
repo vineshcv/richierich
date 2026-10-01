@@ -4,49 +4,49 @@
       "id": "saree",
       "name": "Saree",
       "desc": "Silk & festive drapes",
-      "image": "dress_prod-red-saree.png?v=3"
+      "image": "category-saree.png"
     },
     {
       "id": "lehengas",
       "name": "Lehengas",
       "desc": "Bridal & occasion",
-      "image": "dress_prod-teal-lehenga.png?v=3"
+      "image": "category-saree.png"
     },
     {
       "id": "western",
       "name": "Western",
       "desc": "Dresses & daywear",
-      "image": "dress_prod-pastel-maxi.png?v=3"
+      "image": "category-saree.png"
     },
     {
       "id": "kids",
       "name": "Kids",
       "desc": "Little festive looks",
-      "image": "dress_prod-kids-tropical.png?v=3"
+      "image": "category-saree.png"
     },
     {
       "id": "lipstick",
       "name": "Lipstick",
       "desc": "Matte & cream shades",
-      "image": "dress_prod-lipstick-renee-berry.png?v=1"
+      "image": "category-saree.png"
     },
     {
       "id": "antitarnish",
       "name": "Anti Tarnish",
       "desc": "Everyday jewellery",
-      "image": "dress_prod-antitarnish-evil-eye.png?v=1"
+      "image": "category-saree.png"
     },
     {
       "id": "rings",
       "name": "Rings",
       "desc": "Everyday & bridal",
-      "image": "dress_prod-ring-gold-bypass.png?v=1"
+      "image": "category-saree.png"
     },
     {
       "id": "accessories",
       "name": "Accessories",
       "desc": "Bangles & more",
-      "image": "dress_prod-bangle-emerald-filigree.png?v=1"
+      "image": "category-saree.png"
     }
   ],
   "products": [
@@ -57,9 +57,9 @@
       "category": "saree",
       "tag": "Bridal guest",
       "price": "₹6,999",
-      "image": "dress_prod-red-saree.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-red-saree.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "Deep red silk saree with wide gold embroidered border.",
       "description": "Luxurious red saree with high-sheen silk fall and intricate gold-silver zari border. Styled with a matching embroidered sleeveless blouse — ideal for weddings and festive evenings.",
@@ -92,9 +92,9 @@
       "category": "lehengas",
       "tag": "Occasion",
       "price": "₹8,499",
-      "image": "dress_prod-teal-lehenga.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-teal-lehenga.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "Peacock teal lehenga with magenta floral embroidery.",
       "description": "Three-piece teal lehenga set with a sleeveless embroidered choli, voluminous skirt panels and a bordered dupatta. Made for sangeet and reception looks.",
@@ -127,9 +127,9 @@
       "category": "western",
       "tag": "Weekend",
       "price": "₹2,199",
-      "image": "dress_prod-pastel-maxi.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-pastel-maxi.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "Watercolour pastel maxi with puff sleeves and tiered hem.",
       "description": "Flowing ankle-length maxi in lavender, mint and soft pink florals. Square neck, short puff sleeves and a ruffled tiered skirt.",
@@ -162,9 +162,9 @@
       "category": "western",
       "tag": "Trending",
       "price": "₹1,799",
-      "image": "dress_prod-green-blockprint.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-green-blockprint.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Dark green floral block-print empire midi.",
       "description": "Forest green cotton midi with cream and rose block motifs, V-neck and soft gathering under the bust.",
@@ -197,9 +197,9 @@
       "category": "western",
       "tag": "Bestseller",
       "price": "₹1,699",
-      "image": "dress_prod-indigo-midi.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-indigo-midi.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Indigo midi with beige block print and chevron V-neck.",
       "description": "Deep indigo A-line midi with light block motifs, wide chevron V-neck border and three-quarter sleeves.",
@@ -232,9 +232,9 @@
       "category": "western",
       "tag": "Soft wear",
       "price": "₹1,599",
-      "image": "dress_prod-peach-pleated.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-peach-pleated.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Apricot A-line midi with chest pleats and print motif.",
       "description": "Light peach midi with a rounded square neck, three-quarter sleeves and soft pleats from the bust.",
@@ -267,9 +267,9 @@
       "category": "western",
       "tag": "Everyday",
       "price": "₹1,299",
-      "image": "dress_prod-striped-kurti.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-striped-kurti.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Vertical stripe button-down kurti with side slits.",
       "description": "Long straight kurti in muted blue and grey stripes with a horizontal-stripe yoke and full button placket.",
@@ -302,9 +302,9 @@
       "category": "western",
       "tag": "Bright",
       "price": "₹1,399",
-      "image": "dress_prod-magenta-bandhani.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-magenta-bandhani.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Hot pink bandhani kurti with white motifs.",
       "description": "Vivid magenta kurti with all-over white bandhani motifs and three-quarter sleeves.",
@@ -337,9 +337,9 @@
       "category": "kids",
       "tag": "Ages 2–6",
       "price": "₹999",
-      "image": "dress_prod-kids-tropical.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-kids-tropical.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "White kids dress with palm, crab and sunglasses print.",
       "description": "Playful tiered A-line kids dress with flutter sleeves and a tropical print — soft for summer parties and playdates.",
@@ -372,9 +372,9 @@
       "category": "western",
       "tag": "Set",
       "price": "₹2,299",
-      "image": "dress_prod-orange-coord.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-orange-coord.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "Bright orange geometric tunic with matching trousers.",
       "description": "Two-piece coord set with a collared button-down tunic and straight matching trousers in a bold orange geo print.",
@@ -407,9 +407,9 @@
       "category": "western",
       "tag": "Set",
       "price": "₹2,499",
-      "image": "dress_prod-yellow-set.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-yellow-set.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Yellow floral sleeveless kurta set with dupatta.",
       "description": "Three-piece yellow set: sleeveless printed kurta, solid trousers and matching dupatta.",
@@ -442,9 +442,9 @@
       "category": "western",
       "tag": "Set",
       "price": "₹1,999",
-      "image": "dress_prod-peach-palazzo.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-peach-palazzo.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Peach floral kurta with printed palazzo pants.",
       "description": "Two-piece peach set with a scattered floral kurta and denser geometric palazzo.",
@@ -477,9 +477,9 @@
       "category": "western",
       "tag": "Statement",
       "price": "₹1,899",
-      "image": "dress_prod-black-mandala.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-black-mandala.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Black kurta with beige mandala print — style as a set look.",
       "description": "Deep black straight kurta with large mandala motifs and a dense geometric panel. Pair with cream trousers.",
@@ -512,9 +512,9 @@
       "category": "accessories",
       "tag": "Wedding",
       "price": "₹3,499",
-      "image": "dress_prod-groom-accessories.png?v=3",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-groom-accessories.png?v=3"
+        "red-silk-saree.jpg"
       ],
       "short": "Red safa, beige mojari and pearl mala set for grooms.",
       "description": "Traditional groom accessory trio — deep red turban with kalgi, quilted beige mojaris and a multi-strand pearl mala with gold brooch.",
@@ -547,9 +547,9 @@
       "category": "lehengas",
       "tag": "Festive",
       "price": "₹2,499",
-      "image": "dress_prod-olive-yoke.png?v=2",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-olive-yoke.png?v=2"
+        "red-silk-saree.jpg"
       ],
       "short": "Olive floor-length dress with embroidered chest yoke.",
       "description": "Solid olive long dress with a rounded embroidered yoke panel, round neck and full sleeves.",
@@ -582,9 +582,9 @@
       "category": "lipstick",
       "tag": "Bestseller",
       "price": "₹1,950",
-      "image": "dress_prod-lipstick-mac-red.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-lipstick-mac-red.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Iconic MAC matte red bullet lipstick.",
       "description": "Classic MAC matte red lipstick with a velvet finish and signature black-and-silver bullet packaging. Long-wear colour for everyday glam.",
@@ -617,9 +617,9 @@
       "category": "lipstick",
       "tag": "Everyday",
       "price": "₹499",
-      "image": "dress_prod-lipstick-maybelline.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-lipstick-maybelline.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Maybelline coral-red lipstick with translucent red cap.",
       "description": "Vibrant coral-red Maybelline lipstick in a chrome tube with square red translucent cap. Smooth colour for daily wear.",
@@ -652,9 +652,9 @@
       "category": "lipstick",
       "tag": "Trending",
       "price": "₹699",
-      "image": "dress_prod-lipstick-renee-berry.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-lipstick-renee-berry.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "RENÉE deep berry-magenta matte with bold swatch.",
       "description": "Deep magenta berry matte from RENÉE — black-and-silver tube with rich pigment for statement lips.",
@@ -687,9 +687,9 @@
       "category": "lipstick",
       "tag": "Iconic",
       "price": "₹1,950",
-      "image": "dress_prod-lipstick-mac-classic.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-lipstick-mac-classic.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "MAC classic deep red matte — engraved bullet.",
       "description": "Deep red MAC matte lipstick with engraved brand mark on the bullet. Party and festive favourite.",
@@ -722,9 +722,9 @@
       "category": "lipstick",
       "tag": "Soft glam",
       "price": "₹699",
-      "image": "dress_prod-lipstick-renee-mauve.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-lipstick-renee-mauve.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "RENÉE Prime Matte dusty rose / mauve lipstick.",
       "description": "Soft dusty-rose mauve matte from RENÉE Prime Matte line — everyday nude-berry glam with creamy texture.",
@@ -761,9 +761,9 @@
       "category": "accessories",
       "tag": "Festive",
       "price": "₹2,499",
-      "image": "dress_prod-bangle-emerald-filigree.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-bangle-emerald-filigree.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Pair of gold filigree bangles with emerald-green stones.",
       "description": "Ornate openwork gold bangles with floral motifs, pave clear stones and square emerald-green accents — bridal and festive ready.",
@@ -800,9 +800,9 @@
       "category": "accessories",
       "tag": "Bridal",
       "price": "₹2,299",
-      "image": "dress_prod-bangle-floral-gold.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-bangle-floral-gold.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Wide gold kadas with four-petal floral stone work.",
       "description": "Statement gold kada-style bangles with repeating floral motifs studded in clear stones and lined rims — classic wedding jewellery.",
@@ -839,9 +839,9 @@
       "category": "accessories",
       "tag": "Bridal",
       "price": "₹1,899",
-      "image": "dress_prod-bangle-emerald-chura.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-bangle-emerald-chura.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Traditional chura stacks with green beads and gold borders.",
       "description": "Two bridal chura stacks — embossed gold outer bangles with emerald-green beaded rings and thin stone-set gold bands in between.",
@@ -878,9 +878,9 @@
       "category": "accessories",
       "tag": "Statement",
       "price": "₹2,799",
-      "image": "dress_prod-bangle-polki-kada.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-bangle-polki-kada.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Chunky gold kadas with polki / kundan clear stone work.",
       "description": "Wide hinged gold kadas with openwork lattice and dense polki-style clear stones — teardrop and geometric settings for festive glam.",
@@ -917,9 +917,9 @@
       "category": "antitarnish",
       "tag": "Anti Tarnish",
       "price": "₹799",
-      "image": "dress_prod-antitarnish-oval-pendant.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-antitarnish-oval-pendant.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Anti-tarnish gold box-chain necklace with smooth oval pendant.",
       "description": "Everyday anti-tarnish gold-tone necklace with a Venetian box chain and polished oval pebble pendant — light, durable and water-friendly wear.",
@@ -956,9 +956,9 @@
       "category": "antitarnish",
       "tag": "Anti Tarnish",
       "price": "₹999",
-      "image": "dress_prod-antitarnish-filigree-charms.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-antitarnish-filigree-charms.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Anti-tarnish multi-tone filigree charm necklace.",
       "description": "Statement anti-tarnish chain with openwork filigree disc charms in mixed gold and rose-gold tones — party and festive ready.",
@@ -995,9 +995,9 @@
       "category": "antitarnish",
       "tag": "Anti Tarnish",
       "price": "₹899",
-      "image": "dress_prod-antitarnish-evil-eye.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-antitarnish-evil-eye.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Anti-tarnish rose-gold evil eye with turquoise centre.",
       "description": "Protective evil-eye pendant in rose-gold tone with turquoise cabochon and lash-tip stones — anti-tarnish for daily layering.",
@@ -1034,9 +1034,9 @@
       "category": "antitarnish",
       "tag": "Anti Tarnish",
       "price": "₹1,099",
-      "image": "dress_prod-antitarnish-halo-pendant.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-antitarnish-halo-pendant.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Anti-tarnish rose-gold cushion halo pendant with clear stones.",
       "description": "Square cushion-cut centre stone framed by double halos of clear stones on a delicate rose-gold anti-tarnish chain — soft glam everyday jewellery.",
@@ -1073,9 +1073,9 @@
       "category": "rings",
       "tag": "Statement",
       "price": "₹1,299",
-      "image": "dress_prod-ring-leaf-bypass.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-ring-leaf-bypass.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Open-shank rose-gold ring with leaf motif and clear stones.",
       "description": "Modern bypass ring in rose-gold tone — marquise leaf cluster on one side with geometric stone caps on the open ends. Anti-tarnish friendly everyday glam.",
@@ -1112,9 +1112,9 @@
       "category": "rings",
       "tag": "Bridal",
       "price": "₹2,499",
-      "image": "dress_prod-ring-solitaire-halo-duo.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-ring-solitaire-halo-duo.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Silver-tone pair — round solitaire and emerald-cut halo rings.",
       "description": "Matching bridal-look duo: a pavé round solitaire and an emerald-cut centre with halo — polished silver-tone bands for engagement glam.",
@@ -1151,9 +1151,9 @@
       "category": "rings",
       "tag": "Bestseller",
       "price": "₹1,499",
-      "image": "dress_prod-ring-gold-bypass.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-ring-gold-bypass.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "Yellow-gold bypass ring with round centre and pavé strand.",
       "description": "Elegant intertwined bypass design — polished yellow-gold strand crossed with a pavé clear-stone strand and a six-prong round centre stone.",
@@ -1190,9 +1190,9 @@
       "category": "rings",
       "tag": "Couple",
       "price": "₹1,999",
-      "image": "dress_prod-ring-couple-set.png?v=1",
+      "image": "red-silk-saree.jpg",
       "gallery": [
-        "dress_prod-ring-couple-set.png?v=1"
+        "red-silk-saree.jpg"
       ],
       "short": "His & hers yellow-gold rings with rope detail and solitaires.",
       "description": "Matching couple set — delicate bypass rope solitaire for her and a wider rope-detail band for him, both in polished yellow-gold tone.",
@@ -1230,7 +1230,7 @@
       "tag": "Most loved",
       "price": "₹2,299",
       "priceNote": "set",
-      "image": "dress_prod-orange-coord.png?v=3",
+      "image": "red-silk-saree.jpg",
       "blurb": "Bright orange geometric tunic with matching trousers.",
       "includes": [
         "Printed tunic",
@@ -1245,7 +1245,7 @@
       "tag": "Festive",
       "price": "₹2,499",
       "priceNote": "set",
-      "image": "dress_prod-yellow-set.png?v=2",
+      "image": "red-silk-saree.jpg",
       "blurb": "Yellow floral sleeveless kurta with matching trousers and dupatta.",
       "includes": [
         "Printed kurta",
@@ -1260,7 +1260,7 @@
       "tag": "Everyday",
       "price": "₹1,999",
       "priceNote": "set",
-      "image": "dress_prod-peach-palazzo.png?v=2",
+      "image": "red-silk-saree.jpg",
       "blurb": "Peach floral kurta with wide printed palazzo pants.",
       "includes": [
         "Printed kurta",
@@ -1277,7 +1277,7 @@
       "tag": "Season offer",
       "price": "₹6,999",
       "priceNote": "limited",
-      "image": "dress_prod-red-saree.png?v=3",
+      "image": "red-silk-saree.jpg",
       "blurb": "Deep red silk saree with heavy gold border — bridal guest ready.",
       "includes": [
         "Silk saree",
@@ -1292,7 +1292,7 @@
       "tag": "Season offer",
       "price": "₹8,499",
       "priceNote": "occasion",
-      "image": "dress_prod-teal-lehenga.png?v=3",
+      "image": "red-silk-saree.jpg",
       "blurb": "Peacock teal lehenga with multi-colour embroidery and dupatta.",
       "includes": [
         "Embroidered lehenga",
@@ -1307,7 +1307,7 @@
       "tag": "Season offer",
       "price": "₹999",
       "priceNote": "kids",
-      "image": "dress_prod-kids-tropical.png?v=3",
+      "image": "red-silk-saree.jpg",
       "blurb": "Tropical print kids dress — playday and party soft.",
       "includes": [
         "Tiered kids dress",

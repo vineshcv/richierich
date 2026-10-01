@@ -12,8 +12,9 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function __construct(private CategoryService $categories)
-    {
+    public function __construct(
+        private CategoryService $categories,
+    ) {
     }
 
     public function index(): View

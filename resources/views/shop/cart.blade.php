@@ -2,29 +2,126 @@
 
 @section('dress_page', 'cart')
 @section('body_class', 'page-cart')
-@section('title', 'Cart — '.($settings->store_name ?? 'Richie Rich').' Boutique')
+@section('title', 'Cart — Richierich')
+
+@push('head')
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+@endpush
 
 @section('content')
-<section class="page-hero">
+<section class="shop-hero">
   <div class="container">
     <div class="breadcrumb">
       <a href="{{ route('home') }}">Home</a><span>/</span><span>Cart</span>
     </div>
-    <h1>Your cart</h1>
+    <h1>Your Cart</h1>
   </div>
 </section>
 
 <section class="section">
   <div class="container cart-layout">
-    <div id="cart-items"></div>
+    <div class="cart-main">
+      <div id="cart-items"></div>
+      <form id="checkout-form" class="checkout-box" hidden data-login="{{ route('checkout.login') }}" novalidate>
+        @guest
+          <p class="checkout-returning">Returning customer? <button type="button" id="checkout-login-toggle">Click here to login</button></p>
+          <div id="checkout-login" class="checkout-login" hidden>
+            <div class="field">
+              <label for="login-email">Email address</label>
+              <input id="login-email" type="email" autocomplete="username" placeholder="you@email.com" />
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" autocomplete="current-password" />
+            </div>
+            <button type="button" class="btn btn-ghost" id="checkout-login-submit">Login</button>
+            <p class="checkout-login-status" id="checkout-login-status" hidden></p>
+          </div>
+        @endguest
+        @auth
+          <p class="checkout-as">Checking out as <strong>{{ auth()->user()->email }}</strong></p>
+        @endauth
+
+        <h2>Shipping address</h2>
+        @php
+          $shopName = trim((string) (auth()->user()->name ?? ''));
+          $nameParts = $shopName === '' ? [] : preg_split('/\s+/', $shopName, 2);
+          $states = ['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'];
+        @endphp
+        <div class="form-grid checkout-grid">
+          <div class="field">
+            <label for="ship-first">First name <span class="req">*</span></label>
+            <input id="ship-first" name="first_name" required autocomplete="given-name" value="{{ $nameParts[0] ?? '' }}" />
+          </div>
+          <div class="field">
+            <label for="ship-last">Last name <span class="req">*</span></label>
+            <input id="ship-last" name="last_name" required autocomplete="family-name" value="{{ $nameParts[1] ?? '' }}" />
+          </div>
+          <div class="field full">
+            <label for="ship-country">Country / Region <span class="req">*</span></label>
+            <select id="ship-country" name="country" required>
+              <option value="India" selected>India</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="ship-address">Street address <span class="req">*</span></label>
+            <input id="ship-address" name="address_1" required autocomplete="address-line1" placeholder="House number and street name" />
+          </div>
+          <div class="field full">
+            <label class="sr-only" for="ship-address-2">Apartment</label>
+            <input id="ship-address-2" name="address_2" autocomplete="address-line2" placeholder="Apartment, suite, unit, etc. (optional)" />
+          </div>
+          <div class="field">
+            <label for="ship-city">Town / City <span class="req">*</span></label>
+            <input id="ship-city" name="city" required autocomplete="address-level2" />
+          </div>
+          <div class="field">
+            <label for="ship-state">State <span class="req">*</span></label>
+            <select id="ship-state" name="state" required autocomplete="address-level1">
+              <option value="">Select a state…</option>
+              @foreach($states as $state)
+                <option value="{{ $state }}">{{ $state }}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="field">
+            <label for="ship-pin">PIN code <span class="req">*</span></label>
+            <input id="ship-pin" name="postcode" required inputmode="numeric" autocomplete="postal-code" maxlength="6" placeholder="6-digit PIN" />
+          </div>
+          <div class="field">
+            <label for="ship-phone">Phone <span class="req">*</span></label>
+            <input id="ship-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="10-digit mobile" />
+          </div>
+          <div class="field full">
+            <label for="ship-email">Email address <span class="req">*</span></label>
+            <input id="ship-email" name="email" type="email" required autocomplete="email" value="{{ auth()->user()->email ?? '' }}" />
+          </div>
+        </div>
+
+        @guest
+          <label class="checkout-create">
+            <input type="checkbox" id="create-account" name="create_account" value="1" />
+            Create an account?
+          </label>
+          <div id="account-fields" class="checkout-account" hidden>
+            <p>Create an account by entering a password below. If you are a returning customer please login at the top of the page.</p>
+            <div class="field">
+              <label for="account-password">Account password <span class="req">*</span></label>
+              <input id="account-password" name="password" type="password" autocomplete="new-password" minlength="8" />
+            </div>
+          </div>
+        @endguest
+      </form>
+    </div>
     <aside class="cart-summary">
       <h2>Order summary</h2>
       <div class="cart-summary-row"><span>Items</span><span id="summary-count">0</span></div>
       <div class="cart-summary-row total"><span>Total</span><span id="summary-total">₹0</span></div>
+      <button type="button" class="btn btn-primary cart-pay" id="btn-pay" hidden data-create="{{ route('checkout.razorpay') }}" data-verify="{{ route('checkout.razorpay.verify') }}">Pay now</button>
+      <p class="cart-pay-note" id="cart-pay-status" hidden></p>
       <div class="cart-summary-actions">
-        <button type="button" class="cart-action-ico cart-action-wa" id="btn-wa-cart" aria-label="Enquire on WhatsApp" title="Enquire on WhatsApp">
-          <svg class="ico-wa" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.52 3.48A11.78 11.78 0 0012.04 0C5.5 0 .2 5.3.2 11.82c0 2.08.55 4.11 1.6 5.9L0 24l6.45-1.69a11.8 11.8 0 005.58 1.42h.01c6.54 0 11.84-5.3 11.84-11.82 0-3.16-1.23-6.13-3.36-8.43zM12.05 21.5h-.01a9.7 9.7 0 01-4.94-1.35l-.35-.21-3.82 1 1.02-3.72-.23-.38a9.7 9.7 0 01-1.5-5.18c0-5.36 4.36-9.72 9.73-9.72a9.66 9.66 0 016.88 2.85 9.66 9.66 0 012.85 6.88c0 5.36-4.37 9.73-9.73 9.73zm5.33-7.28c-.29-.15-1.72-.85-1.99-.95-.27-.1-.46-.15-.66.15-.2.29-.76.95-.93 1.14-.17.2-.34.22-.63.07-.29-.15-1.22-.45-2.33-1.43-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.43-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.52-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.52.07-.79.37-.27.29-1.04 1.02-1.04 2.48s1.07 2.87 1.22 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.09 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.11-.26-.18-.55-.33z"/></svg>
-        </button>
         <button type="button" class="cart-action-ico cart-action-clear" id="btn-clear-cart" aria-label="Clear cart" title="Clear cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6m4 4v7m6-7v7"/></svg>
         </button>
@@ -36,5 +133,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('assets/dress_cart-page.js') }}?v=7"></script>
+<script src="{{ asset('assets/dress_cart-page.js') }}?v=11"></script>
 @endpush

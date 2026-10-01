@@ -33,18 +33,16 @@
       </div>
 
       <div class="field">
-        <label for="category_search">Category (search or type new) *</label>
-        <input id="category_search" list="category-list" type="text"
-               value="{{ old('category_name', $product->category?->name) }}"
-               placeholder="Start typing…" autocomplete="off" />
-        <datalist id="category-list">
-          @foreach($categories as $category)
-            <option value="{{ $category->name }}" data-id="{{ $category->id }}"></option>
-          @endforeach
-        </datalist>
+        <label for="category_search">Category *</label>
+        <div class="category-search">
+          <input id="category_search" name="category_search" type="text"
+                 value="{{ old('category_search', old('category_name', $product->category?->name)) }}"
+                 placeholder="Search categories…" autocomplete="off" required />
+          <div class="category-search-list" id="category-search-list" hidden></div>
+        </div>
         <input type="hidden" name="category_id" id="category_id" value="{{ old('category_id', $product->category_id) }}" />
-        <input type="hidden" name="category_name" id="category_name" value="{{ old('category_name', $product->category?->name) }}" />
-        <p class="muted" style="font-size:0.8rem;margin:0.35rem 0 0;">Pick an existing category or enter a new name to create one.</p>
+        <input type="hidden" name="category_name" id="category_name" value="{{ old('category_name') }}" />
+        <p class="muted" id="category-search-note" style="font-size:0.8rem;margin:0.35rem 0 0;">Search the shared categories. If the name already exists, this product is added under it.</p>
         @error('category_id')<div class="error">{{ $message }}</div>@enderror
         @error('category_name')<div class="error">{{ $message }}</div>@enderror
       </div>
@@ -72,16 +70,23 @@
       </div>
 
       <div class="field">
-        <label for="available_sizes">Available sizes <span class="muted">(comma-separated)</span></label>
-        <input id="available_sizes" type="text" name="available_sizes"
-               value="{{ old('available_sizes', is_array($product->available_sizes) ? implode(', ', $product->available_sizes) : '') }}"
-               placeholder="S, M, L, Free size" />
+        <label for="price">Price *</label>
+        <input id="price" type="text" inputmode="decimal" name="price" value="{{ old('price', $product->price !== null ? rtrim(rtrim(number_format((float) $product->price, 2, '.', ''), '0'), '.') : '') }}" required autocomplete="off" />
+        @error('price')<div class="error">{{ $message }}</div>@enderror
       </div>
 
       <div class="field">
-        <label for="price">Price *</label>
-        <input id="price" type="number" step="0.01" min="0" name="price" value="{{ old('price', $product->price ?? 0) }}" required />
-        @error('price')<div class="error">{{ $message }}</div>@enderror
+        <label for="stock">Stock *</label>
+        <input id="stock" type="text" inputmode="numeric" name="stock" value="{{ old('stock', $product->stock) }}" required autocomplete="off" />
+        <p class="muted" style="font-size:0.8rem;margin:0.35rem 0 0;">Pieces available. Each paid order reduces this. 0 means out of stock.</p>
+        @error('stock')<div class="error">{{ $message }}</div>@enderror
+      </div>
+
+      <div class="field">
+        <label for="stock_threshold">Low stock threshold</label>
+        <input id="stock_threshold" type="number" min="0" step="1" name="stock_threshold" value="{{ old('stock_threshold', $product->stock_threshold ?? 5) }}" />
+        <p class="muted" style="font-size:0.8rem;margin:0.35rem 0 0;">When stock is at or below this, the shop shows how many are left.</p>
+        @error('stock_threshold')<div class="error">{{ $message }}</div>@enderror
       </div>
 
       <div class="field">
@@ -180,23 +185,72 @@
   const search = document.getElementById('category_search');
   const categoryId = document.getElementById('category_id');
   const categoryName = document.getElementById('category_name');
-  const options = Array.from(document.querySelectorAll('#category-list option'));
+  const list = document.getElementById('category-search-list');
+  const note = document.getElementById('category-search-note');
+  const categories = @json($categories->map(fn ($category) => ['id' => $category->id, 'name' => $category->name])->values());
 
   function syncCategory() {
     const value = (search.value || '').trim();
-    const match = options.find(o => o.value.toLowerCase() === value.toLowerCase());
+    const match = categories.find(function (category) {
+      return category.name.toLowerCase() === value.toLowerCase();
+    });
     if (match) {
-      categoryId.value = match.getAttribute('data-id') || '';
+      categoryId.value = match.id;
       categoryName.value = '';
+      if (note) note.textContent = 'This category already exists. The product will be added under it.';
     } else {
       categoryId.value = '';
       categoryName.value = value;
+      if (note) note.textContent = value
+        ? 'New category. It will be created once and shared with every store.'
+        : 'Search the shared categories. If the name already exists, this product is added under it.';
     }
   }
 
-  search?.addEventListener('input', syncCategory);
-  search?.addEventListener('change', syncCategory);
+  function renderList() {
+    if (!list || !search) return;
+    const value = (search.value || '').trim().toLowerCase();
+    const matches = categories.filter(function (category) {
+      return value === '' || category.name.toLowerCase().indexOf(value) !== -1;
+    }).slice(0, 8);
+    list.hidden = matches.length === 0;
+    list.innerHTML = matches.map(function (category) {
+      return '<button type="button" data-id="' + category.id + '">' +
+        String(category.name).replace(/</g, '&lt;') + '</button>';
+    }).join('');
+  }
+
+  search?.addEventListener('input', function () {
+    syncCategory();
+    renderList();
+  });
+  search?.addEventListener('focus', renderList);
+  list?.addEventListener('click', function (event) {
+    const button = event.target.closest('button');
+    if (!button) return;
+    search.value = button.textContent;
+    syncCategory();
+    list.hidden = true;
+  });
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest('.category-search')) list.hidden = true;
+  });
   syncCategory();
+
+  function numbersOnly(el, decimal) {
+    if (!el) return;
+    el.addEventListener('input', function () {
+      if (decimal) {
+        var cleaned = el.value.replace(/[^\d.]/g, '');
+        var parts = cleaned.split('.');
+        el.value = parts.length > 1 ? parts[0] + '.' + parts.slice(1).join('').slice(0, 2) : parts[0];
+      } else {
+        el.value = el.value.replace(/\D+/g, '');
+      }
+    });
+  }
+  numbersOnly(document.getElementById('price'), true);
+  numbersOnly(document.getElementById('stock'), false);
 
   const input = document.getElementById('images');
   const pending = document.getElementById('image-pending');

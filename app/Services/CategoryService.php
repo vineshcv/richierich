@@ -24,7 +24,9 @@ class CategoryService
     public function findOrCreateByName(string $name, array $extra = []): Category
     {
         $name = trim($name);
-        $existing = Category::query()->whereRaw('LOWER(name) = ?', [Str::lower($name)])->first();
+        $existing = Category::query()
+            ->whereRaw('LOWER(name) = ?', [Str::lower($name)])
+            ->first();
         if ($existing) {
             return $existing;
         }
@@ -38,6 +40,7 @@ class CategoryService
             $data['image_path'] = $image->store('categories', 'public');
         }
         $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
+        $data['store_id'] = $data['store_id'] ?? app(CurrentStore::class)->adminId();
 
         return Category::create($data);
     }

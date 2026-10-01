@@ -6,9 +6,9 @@
 <div class="login-wrap">
   <div class="card login-card">
     <div class="login-brand">
-      <img src="{{ asset('assets/dress_logo.png') }}" alt="Richie Rich" />
+      <img src="{{ asset('assets/dress_logo.png') }}?v=4" alt="Richierich" />
       <div>
-        <strong>Richie Rich</strong>
+        <strong>Richierich</strong>
         <div class="muted" style="font-size:0.8rem;">Admin access</div>
       </div>
     </div>
@@ -20,8 +20,8 @@
     <form method="POST" action="{{ route('admin.login.submit') }}">
       @csrf
       <div class="field" style="margin-bottom:1rem;">
-        <label for="email">Email</label>
-        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" />
+        <label for="username">Username</label>
+        <input id="username" type="text" name="username" value="{{ old('username') }}" required autofocus autocomplete="username" />
       </div>
       <div class="field" style="margin-bottom:1.25rem;">
         <label for="password">Password</label>

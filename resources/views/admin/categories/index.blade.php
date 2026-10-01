@@ -2,7 +2,7 @@
 
 @section('title', 'Categories')
 @section('heading', 'Categories')
-@section('subheading', 'Organize products for the storefront')
+@section('subheading', 'Shared by every store. A category name can only be created once.')
 @section('actions')
   <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">Add category</a>
 @endsection

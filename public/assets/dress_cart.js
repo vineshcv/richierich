@@ -1,6 +1,6 @@
 (function () {
   var CART_KEY = "azores_dress_cart_v1";
-  var WHATSAPP = (window.DRESS_CONFIG && window.DRESS_CONFIG.whatsapp) || "919447836797";
+  var WHATSAPP = (window.DRESS_CONFIG && window.DRESS_CONFIG.whatsapp) || "";
 
   function formatINR(n) {
     n = Number(n) || 0;
@@ -50,10 +50,18 @@
     qty = qty || 1;
     var product = findProduct(productId);
     if (!product) return;
+    var stock = product.stock === null || product.stock === undefined || product.stock === "" ? null : parseInt(product.stock, 10);
+    if (stock !== null && isNaN(stock)) stock = null;
     var items = readCart();
     var existing = items.find(function (i) {
       return i.id === productId;
     });
+    var inCart = existing ? existing.qty : 0;
+    if (stock === 0 || (stock !== null && inCart >= stock)) {
+      showToast(stock === 0 ? product.name + " is out of stock" : "Only " + stock + " left");
+      return;
+    }
+    if (stock !== null) qty = Math.min(qty, stock - inCart);
     if (existing) {
       existing.qty += qty;
     } else {
@@ -71,6 +79,9 @@
   }
 
   function setQty(productId, qty) {
+    var product = findProduct(productId);
+    var stock = product && product.stock !== null && product.stock !== undefined && product.stock !== "" ? parseInt(product.stock, 10) : null;
+    if (stock !== null && !isNaN(stock)) qty = Math.min(qty, Math.max(stock, 1));
     writeCart(
       readCart()
         .map(function (i) {
@@ -107,7 +118,7 @@
       showToast("Cart is empty");
       return;
     }
-    var lines = ["Hi Richie Rich Boutique,", "", "I'd like to enquire about these items:", ""];
+    var lines = ["Hi Richierich,", "", "I'd like to enquire about these items:", ""];
     items.forEach(function (item, idx) {
       var price = item.price ? formatINR(item.price) : item.priceLabel || "";
       lines.push(idx + 1 + ". " + item.name + " × " + item.qty + (price ? " — " + price : ""));
@@ -156,7 +167,12 @@
       if (addBtn) {
         e.preventDefault();
         e.stopPropagation();
-        addToCart(addBtn.getAttribute("data-add-cart"), 1);
+        var qty = 1;
+        if (addBtn.classList.contains("detail-add")) {
+          var qtyEl = document.getElementById("detail-qty");
+          qty = Math.max(1, parseInt(qtyEl && qtyEl.value, 10) || 1);
+        }
+        addToCart(addBtn.getAttribute("data-add-cart"), qty);
       }
     });
     updateCartBadge();

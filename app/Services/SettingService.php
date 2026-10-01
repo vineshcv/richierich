@@ -13,8 +13,8 @@ class SettingService
             'show_whatsapp' => true,
             'show_cart' => true,
             'show_view' => true,
-            'whatsapp_number' => '919916399733',
-            'store_name' => 'Richie Rich',
+            'whatsapp_number' => null,
+            'store_name' => 'Richierich',
         ]);
     }
 

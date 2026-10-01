@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Services\CatalogService;
+use App\Services\CurrentStore;
 use App\Services\SettingService;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -34,11 +35,21 @@ class AppServiceProvider extends ServiceProvider
                     Category::query()
                         ->where('is_active', true)
                         ->where('slug', '!=', 'specials')
+                        ->whereHas('products', fn ($query) => $query->where('status', 'active'))
                         ->orderBy('sort_order')
                         ->orderBy('name')
                         ->get()
                 );
             }
+        });
+
+        View::composer('layouts.admin', function ($view) {
+            $current = app(CurrentStore::class);
+            $view->with('currentStore', $current->admin());
+            $view->with('canSwitchStore', $current->canSwitch());
+            $view->with('adminStores', $current->canSwitch()
+                ? \App\Models\Store::query()->orderBy('name')->get()
+                : collect());
         });
     }
 

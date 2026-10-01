@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Product;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -35,6 +36,18 @@ class UpdateProductRequest extends FormRequest
         if ($this->has('replace_images')) {
             $this->merge(['replace_images' => filter_var($this->replace_images, FILTER_VALIDATE_BOOLEAN)]);
         }
+        $sku = trim((string) $this->input('sku', ''));
+        $this->merge(['sku' => $sku === '' ? null : $sku]);
+        $name = trim((string) ($this->input('category_search') ?: $this->input('category_name')));
+        if ($name === '') {
+            return;
+        }
+        $existing = Category::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+        if ($existing) {
+            $this->merge(['category_id' => $existing->id, 'category_name' => null]);
+        } else {
+            $this->merge(['category_id' => null, 'category_name' => $name]);
+        }
     }
 
     public function rules(): array
@@ -44,8 +57,8 @@ class UpdateProductRequest extends FormRequest
         return [
             'name' => ['sometimes', 'required', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
-            'category_id' => ['nullable', 'integer', 'exists:categories,id'],
-            'category_name' => ['nullable', 'string', 'max:120'],
+            'category_id' => ['nullable', 'integer', 'exists:categories,id', 'required_without:category_name'],
+            'category_name' => ['nullable', 'string', 'max:120', 'required_without:category_id'],
             'designer' => ['nullable', 'string', 'max:120'],
             'fabric' => ['nullable', 'string', 'max:120'],
             'fit' => ['nullable', 'string', 'max:120'],
@@ -54,7 +67,9 @@ class UpdateProductRequest extends FormRequest
             'available_sizes' => ['nullable', 'array'],
             'available_sizes.*' => ['string', 'max:40'],
             'show_price' => ['sometimes', 'boolean'],
-            'price' => ['sometimes', 'required', 'numeric', 'min:0'],
+            'price' => ['sometimes', 'required', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'stock' => ['required', 'integer', 'min:0', 'max:100000', 'regex:/^\d+$/'],
+            'stock_threshold' => ['nullable', 'integer', 'min:0', 'max:100000'],
             'sku' => ['nullable', 'string', 'max:80', Rule::unique('products', 'sku')->ignore($productId)],
             'care_instructions' => ['nullable', 'string'],
             'admin_note' => ['nullable', 'string', 'max:5000'],
@@ -67,6 +82,17 @@ class UpdateProductRequest extends FormRequest
             'remove_image_ids.*' => ['integer', 'exists:product_images,id'],
             'primary_image_id' => ['nullable', 'integer', 'exists:product_images,id'],
             'replace_images' => ['sometimes', 'boolean'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'category_id.required_without' => 'Choose a category.',
+            'category_name.required_without' => 'Choose a category.',
+            'sku.unique' => 'This SKU is already used.',
+            'price.regex' => 'Enter the price using numbers only.',
+            'stock.regex' => 'Enter the stock using whole numbers only.',
         ];
     }
 }

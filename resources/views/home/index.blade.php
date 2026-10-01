@@ -1,7 +1,13 @@
 @extends('layouts.shop')
 
 @section('dress_page', 'home')
-@section('title', ($settings->store_name ?? 'Richie Rich').' Boutique — Ethnic & western dresses · WhatsApp enquire')
+@section('title', 'Richierich — Ethnic & western dresses · WhatsApp enquire')
+
+@push('head')
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+@endpush
 
 @section('content')
 <section class="dress-top">
@@ -15,12 +21,12 @@
       <div class="banner-rail" id="banner-rail" tabindex="0" aria-label="Offers">
         @forelse($banners as $banner)
           <a class="banner-card" href="{{ $banner->link_url ?: route('shop.products') }}">
-            <img src="{{ $banner->image_url }}" alt="{{ $banner->title ?: (($settings->store_name ?? 'Richie Rich').' banner') }}" />
+            <img src="{{ $banner->image_url }}" alt="{{ $banner->title ?: 'Richierich banner' }}" />
           </a>
         @empty
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/b1.png') }}" alt="Banner" /></a>
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/b2.png') }}" alt="Banner" /></a>
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/b3.png') }}" alt="Banner" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-style.jpg') }}" alt="Celebrate every moment in style" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-sarees.jpg') }}" alt="Elegant sarees" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-kurtis.jpg') }}" alt="Trendy kurtis and sets" /></a>
         @endforelse
       </div>
       <div class="banner-dots" id="banner-dots" aria-hidden="true"></div>
@@ -34,6 +40,7 @@
       <div>
         <p class="eyebrow">Shop by category</p>
         <h2>Categories</h2>
+       
       </div>
     </div>
     <div class="category-carousel">

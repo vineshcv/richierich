@@ -1,7 +1,7 @@
 @extends('layouts.shop')
 
 @section('dress_page', 'more')
-@section('title', 'Festive edit — '.($settings->store_name ?? 'Richie Rich').' Boutique')
+@section('title', 'Festive edit — Richierich')
 
 @section('content')
 <section class="page-hero">
@@ -15,7 +15,7 @@
 </section>
 
 <section class="promo-banner">
-  <img src="{{ asset('assets/b2.png') }}" alt="Festive edit at {{ $settings->store_name ?? 'Richie Rich' }} Boutique" />
+  <img src="{{ asset('assets/b2.png') }}" alt="Festive edit at Richierich" />
 </section>
 
 <section class="section">

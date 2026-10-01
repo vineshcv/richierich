@@ -45,6 +45,7 @@
           <th>Name</th>
           <th>Category</th>
           <th>Price</th>
+          <th>Stock</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -75,6 +76,17 @@
               @endif
             </td>
             <td>
+              @if($product->stock === null)
+                <span class="badge badge-muted">Not set</span>
+              @elseif($product->stock < 1)
+                <span class="badge badge-muted">Out · 0</span>
+              @elseif($product->stock_threshold !== null && $product->stock <= $product->stock_threshold)
+                <span class="badge badge-warn">Low · {{ $product->stock }}</span>
+              @else
+                <span class="badge badge-success">{{ $product->stock }}</span>
+              @endif
+            </td>
+            <td>
               <span class="badge {{ $product->status === 'active' ? 'badge-success' : ($product->status === 'draft' ? 'badge-warn' : 'badge-muted') }}">
                 {{ $product->status }}
               </span>
@@ -89,7 +101,7 @@
             </td>
           </tr>
         @empty
-          <tr><td colspan="6" class="muted">No products yet.</td></tr>
+          <tr><td colspan="7" class="muted">No products yet.</td></tr>
         @endforelse
       </tbody>
     </table>
@@ -112,6 +124,15 @@
                   ₹{{ number_format((float) $product->price, 2) }}
                 @else
                   Price hidden
+                @endif
+              </span>
+              <span>
+                @if($product->stock === null)
+                  Stock not set
+                @elseif($product->stock < 1)
+                  Out of stock
+                @else
+                  Stock {{ $product->stock }}
                 @endif
               </span>
             </div>

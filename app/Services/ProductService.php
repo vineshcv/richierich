@@ -20,6 +20,7 @@ class ProductService
     {
         return Product::query()
             ->with(['category', 'images'])
+            ->when(app(CurrentStore::class)->adminId(), fn ($q, $storeId) => $q->where('store_id', $storeId))
             ->when(! empty($filters['category_id']), fn ($q) => $q->where('category_id', $filters['category_id']))
             ->when(! empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
             ->when(! empty($filters['q']), function ($q) use ($filters) {
@@ -41,6 +42,7 @@ class ProductService
 
         return DB::transaction(function () use ($data, $images) {
             $data = $this->resolveCategory($data);
+            $data['store_id'] = app(CurrentStore::class)->adminId();
             $data['slug'] = Str::slug($data['name']).'-'.Str::lower(Str::random(4));
             $data['status'] = $data['status'] ?? 'active';
             $data['show_price'] = $data['show_price'] ?? true;

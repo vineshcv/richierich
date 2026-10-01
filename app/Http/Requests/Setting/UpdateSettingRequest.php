@@ -27,8 +27,6 @@ class UpdateSettingRequest extends FormRequest
             'show_whatsapp' => ['sometimes', 'boolean'],
             'show_cart' => ['sometimes', 'boolean'],
             'show_view' => ['sometimes', 'boolean'],
-            'whatsapp_number' => ['nullable', 'string', 'max:20'],
-            'store_name' => ['nullable', 'string', 'max:120'],
         ];
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.shop')
 
 @section('dress_page', 'more')
-@section('title', 'Custom order — '.($settings->store_name ?? 'Richie Rich').' Boutique')
+@section('title', 'Custom order — Richierich')
 
 @section('content')
 @php $wa = preg_replace('/\D+/', '', $settings->whatsapp_number ?? ''); @endphp
@@ -43,7 +43,7 @@
     <div class="form-card">
       <h2>Bulk enquiry form</h2>
       <p>All fields go into your WhatsApp message — nothing is stored on the site.</p>
-      <form data-wa-form="Hi {{ $settings->store_name ?? 'Richie Rich' }} Boutique, BULK ORDER enquiry:">
+      <form data-wa-form="Hi Richierich, BULK ORDER enquiry:">
         <div class="form-grid">
           <div class="field">
             <label for="name">Name / business</label>

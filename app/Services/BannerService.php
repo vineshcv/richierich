@@ -13,7 +13,12 @@ class BannerService
 
     public function list(bool $activeOnly = false)
     {
+        $storeId = request()->is('admin', 'admin/*')
+            ? app(CurrentStore::class)->adminId()
+            : null;
+
         return Banner::query()
+            ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
             ->when($activeOnly, fn ($q) => $q->where('is_active', true))
             ->orderBy('sort_order')
             ->orderBy('id')
@@ -22,14 +27,16 @@ class BannerService
 
     public function create(array $data, UploadedFile $image): Banner
     {
-        if (Banner::count() >= self::MAX_BANNERS) {
+        $storeId = app(CurrentStore::class)->adminId();
+        if ($storeId && Banner::query()->where('store_id', $storeId)->count() >= self::MAX_BANNERS) {
             throw ValidationException::withMessages([
                 'image' => ['Maximum of '.self::MAX_BANNERS.' banners allowed.'],
             ]);
         }
 
         $data['image_path'] = $image->store('banners', 'public');
-        $data['sort_order'] = $data['sort_order'] ?? ((int) Banner::max('sort_order') + 1);
+        $data['store_id'] = app(CurrentStore::class)->adminId();
+        $data['sort_order'] = $data['sort_order'] ?? ((int) Banner::query()->where('store_id', $data['store_id'])->max('sort_order') + 1);
         $data['is_active'] = $data['is_active'] ?? true;
 
         return Banner::create($data);

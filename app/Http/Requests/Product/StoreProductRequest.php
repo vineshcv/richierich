@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Product;
 
+use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -32,10 +33,39 @@ class StoreProductRequest extends FormRequest
         if ($this->has('show_price')) {
             $this->merge(['show_price' => filter_var($this->show_price, FILTER_VALIDATE_BOOLEAN)]);
         }
-        // Allow creating category by name in same request
-        if ($this->filled('category_name') && ! $this->filled('category_id')) {
-            // handled in service
+        $sku = trim((string) $this->input('sku', ''));
+        $this->merge(['sku' => $sku === '' ? null : $sku]);
+        $this->attachExistingCategory();
+    }
+
+    private function attachExistingCategory(): void
+    {
+        $name = trim((string) $this->input('category_name', ''));
+        $typed = trim((string) $this->input('category_search', $name));
+        if ($typed !== '') {
+            $name = $typed;
         }
+        if ($name === '') {
+            return;
+        }
+
+        $existing = Category::query()
+            ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+            ->first();
+
+        if ($existing) {
+            $this->merge([
+                'category_id' => $existing->id,
+                'category_name' => null,
+            ]);
+
+            return;
+        }
+
+        $this->merge([
+            'category_id' => null,
+            'category_name' => $name,
+        ]);
     }
 
     public function rules(): array
@@ -53,7 +83,9 @@ class StoreProductRequest extends FormRequest
             'available_sizes' => ['nullable', 'array'],
             'available_sizes.*' => ['string', 'max:40'],
             'show_price' => ['sometimes', 'boolean'],
-            'price' => ['required', 'numeric', 'min:0'],
+            'price' => ['required', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'],
+            'stock' => ['required', 'integer', 'min:0', 'max:100000', 'regex:/^\d+$/'],
+            'stock_threshold' => ['nullable', 'integer', 'min:0', 'max:100000'],
             'sku' => ['nullable', 'string', 'max:80', Rule::unique('products', 'sku')],
             'care_instructions' => ['nullable', 'string'],
             'admin_note' => ['nullable', 'string', 'max:5000'],
@@ -62,6 +94,17 @@ class StoreProductRequest extends FormRequest
             'status' => ['nullable', Rule::in(['active', 'draft', 'archived'])],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'max:4096'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'category_id.required_without' => 'Choose a category.',
+            'category_name.required_without' => 'Choose a category.',
+            'sku.unique' => 'This SKU is already used.',
+            'price.regex' => 'Enter the price using numbers only.',
+            'stock.regex' => 'Enter the stock using whole numbers only.',
         ];
     }
 }

@@ -1,5 +1,5 @@
 /* Richie Rich PWA service worker — dress demo parity */
-var CACHE_VERSION = "richierich-v2";
+var CACHE_VERSION = "richierich-v6";
 var SHELL_CACHE = CACHE_VERSION + "-shell";
 var RUNTIME_CACHE = CACHE_VERSION + "-runtime";
 var OFFLINE_FALLBACK = "./";
@@ -15,6 +15,7 @@ var PRECACHE_URLS = [
   "./manifest.webmanifest",
   "./assets/dress_styles.css",
   "./assets/dress_logo.png",
+  "./assets/dress_mark.png",
   "./assets/dress_icon-192.png",
   "./assets/dress_icon-512.png",
   "./assets/dress_apple-touch-icon.png",

@@ -1,13 +1,14 @@
 @php
-  $waDigits = preg_replace('/\D+/', '', $settings->whatsapp_number ?? '919447836797');
+  $waDigits = \App\Models\Store::siteWhatsapp();
   $catalog = $catalog ?? ['categories' => [], 'products' => [], 'combos' => [], 'season' => []];
 @endphp
 <script>
   window.DRESS_CONFIG = {
     whatsapp: @json($waDigits),
-    siteName: @json(($settings->store_name ?? 'Richie Rich').' Boutique'),
-    logo: @json(asset('assets/dress_logo.png')),
-    icon: @json(asset('assets/dress_icon-192.png')),
+    siteName: @json('Richierich'),
+    logo: @json(asset('assets/dress_logo.png').'?v=4'),
+    mark: @json(asset('assets/dress_mark.png').'?v=1'),
+    icon: @json(asset('assets/dress_icon-192.png').'?v=3'),
     defaultImage: @json(asset('assets/dress_prod-red-saree.png')),
     sw: @json(asset('sw.js')),
     routes: {

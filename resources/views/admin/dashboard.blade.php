@@ -2,7 +2,7 @@
 
 @section('title', 'Dashboard')
 @section('heading', 'Dashboard')
-@section('subheading', 'Overview of your Richie Rich storefront')
+@section('subheading', 'Overview of your Richierich storefront')
 
 @section('content')
 <div class="stats">
@@ -15,6 +15,11 @@
     <span>Categories</span>
     <strong>{{ $categoryCount }}</strong>
     <a href="{{ route('admin.categories.index') }}">Manage categories →</a>
+  </div>
+  <div class="stat">
+    <span>Orders</span>
+    <strong>{{ $orderCount }}</strong>
+    <a href="{{ route('admin.orders.index') }}">View orders →</a>
   </div>
   <div class="stat">
     <span>Banners</span>

@@ -26,6 +26,9 @@ class DressCatalogSeeder extends Seeder
         $business = '/Applications/MAMP/htdocs/business';
 
         // Categories — keep dress demo ids (antitarnish, etc.)
+        $storeId = \App\Models\Store::query()->where('is_default', true)->value('id')
+            ?? \App\Models\Store::query()->orderBy('id')->value('id');
+
         $categoryMap = [];
         foreach ($data['categories'] as $i => $cat) {
             $imageRel = null;
@@ -39,6 +42,7 @@ class DressCatalogSeeder extends Seeder
             $model = Category::query()->updateOrCreate(
                 ['slug' => $slug],
                 [
+                    'store_id' => $storeId,
                     'name' => $cat['name'],
                     'description' => $cat['desc'] ?? null,
                     'image_path' => $imageRel,
@@ -52,16 +56,16 @@ class DressCatalogSeeder extends Seeder
         // Extra category for any unknown
         $categoryMap['season'] = Category::query()->firstOrCreate(
             ['slug' => 'specials'],
-            ['name' => 'Specials', 'description' => 'Season edits', 'sort_order' => 99, 'is_active' => true]
+            ['store_id' => $storeId, 'name' => 'Specials', 'description' => 'Season edits', 'sort_order' => 99, 'is_active' => true]
         )->id;
 
         // Clear existing dress products/images (keep admin). Safer: upsert by sku from dress id
         foreach ($data['products'] as $item) {
-            $this->importProduct($item, $categoryMap, $business);
+            $this->importProduct($item, $categoryMap, $business, $storeId);
         }
 
         // Banners (replace existing seeded banners for dress look)
-        Banner::query()->delete();
+        Banner::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->delete();
         foreach (($data['banners'] ?? []) as $i => $banner) {
             $src = $business.'/'.$banner['image'];
             if (! File::exists($src)) {
@@ -70,6 +74,7 @@ class DressCatalogSeeder extends Seeder
             $rel = 'banners/'.$banner['image'];
             Storage::disk('public')->put($rel, File::get($src));
             Banner::create([
+                'store_id' => $storeId,
                 'title' => $banner['title'] ?? null,
                 'image_path' => $rel,
                 'link_url' => url($banner['link'] ?? '/shop'),
@@ -81,7 +86,7 @@ class DressCatalogSeeder extends Seeder
         $this->command?->info('Imported '.count($data['products']).' products, '.count($data['categories']).' categories, banners.');
     }
 
-    private function importProduct(array $item, array $categoryMap, string $business): void
+    private function importProduct(array $item, array $categoryMap, string $business, ?int $storeId = null): void
     {
         $catKey = $item['category'] ?? 'western';
         $categoryId = $categoryMap[$catKey] ?? ($categoryMap['western'] ?? Category::query()->value('id'));
@@ -101,7 +106,7 @@ class DressCatalogSeeder extends Seeder
         }
 
         $product = Product::query()->updateOrCreate(
-            ['sku' => 'DRESS-'.Str::upper($item['id'])],
+            ['store_id' => $storeId, 'sku' => 'DRESS-'.Str::upper($item['id'])],
             [
                 'category_id' => $categoryId,
                 'name' => $item['name'],

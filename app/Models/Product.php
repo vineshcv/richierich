@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $fillable = [
+        'store_id',
         'category_id',
         'name',
         'slug',
@@ -22,6 +23,8 @@ class Product extends Model
         'available_sizes',
         'show_price',
         'price',
+        'stock',
+        'stock_threshold',
         'sku',
         'care_instructions',
         'admin_note',
@@ -41,6 +44,8 @@ class Product extends Model
             'tags' => 'array',
             'show_price' => 'boolean',
             'price' => 'decimal:2',
+            'stock' => 'integer',
+            'stock_threshold' => 'integer',
         ];
     }
 
@@ -51,6 +56,11 @@ class Product extends Model
                 $product->slug = Str::slug($product->name).'-'.Str::random(4);
             }
         });
+    }
+
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
     }
 
     public function category(): BelongsTo

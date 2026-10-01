@@ -12,11 +12,6 @@ class CatalogService
     /** @var array<string, mixed>|null */
     private ?array $catalogJson = null;
 
-    public function __construct(
-        private SettingService $settings,
-    ) {
-    }
-
     /**
      * Build dress_data.js–compatible payload for the storefront JS.
      *
@@ -24,8 +19,7 @@ class CatalogService
      */
     public function frontendCatalog(): array
     {
-        $settings = $this->settings->get();
-        $storeName = $settings->store_name ?: 'Richie Rich Boutique';
+        app(StockService::class)->sweepExpired();
 
         $categories = Category::query()
             ->where('is_active', true)
@@ -51,11 +45,11 @@ class CatalogService
         $categories = $this->mergeMissingCategories($categories);
 
         $products = Product::query()
-            ->with(['category', 'images'])
+            ->with(['category', 'images', 'store'])
             ->where('status', 'active')
             ->latest()
             ->get()
-            ->map(fn (Product $p) => $this->mapProduct($p, $storeName))
+            ->map(fn (Product $p) => $this->mapProduct($p))
             ->values()
             ->all();
 
@@ -69,7 +63,7 @@ class CatalogService
         ];
     }
 
-    private function mapProduct(Product $product, string $storeName): array
+    private function mapProduct(Product $product): array
     {
         $fallback = $this->catalogImageForProduct($product->slug);
 
@@ -130,7 +124,7 @@ class CatalogService
         return [
             'id' => $product->slug,
             'name' => $product->name,
-            'brand' => $storeName,
+            'brand' => 'Richierich',
             'category' => $categoryId,
             'tag' => $tag,
             'price' => $price,
@@ -142,6 +136,9 @@ class CatalogService
             'specs' => $specs ?: [['Type', $product->category?->name ?? 'Dress']],
             'sizes' => is_array($product->available_sizes) ? array_values($product->available_sizes) : [],
             'colors' => is_array($product->colors) ? array_values($product->colors) : [],
+            'stock' => $product->stock,
+            'stock_threshold' => $product->stock_threshold,
+            'whatsapp' => preg_replace('/\D+/', '', (string) ($product->store?->whatsapp_number ?? '')) ?? '',
             'url' => url('/product/'.$product->slug),
             'wa' => $product->name,
             'care' => $product->care_instructions,
