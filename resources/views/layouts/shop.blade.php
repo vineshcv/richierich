@@ -47,7 +47,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Richierich" />
   <link rel="apple-touch-icon" href="{{ asset('assets/dress_apple-touch-icon.png') }}?v=3" />
-  <link rel="stylesheet" href="{{ asset('assets/dress_styles.css') }}?v=125" />
+  <link rel="stylesheet" href="{{ asset('assets/dress_styles.css') }}?v=128" />
   @include('partials.dress-config')
   <script src="{{ asset('assets/dress_loader.js') }}?v=9"></script>
   @stack('head')
@@ -106,6 +106,7 @@
       <div class="footer-col">
         <h4>Contact</h4>
         <ul>
+          <li>Ground Floor, Selex Mall, Anjangadi, Thrissur East, PIN 68005</li>
           @php $wa = \App\Models\Store::siteWhatsapp(); @endphp
           @if(($settings->show_whatsapp ?? true) && $wa)
             <li><a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>

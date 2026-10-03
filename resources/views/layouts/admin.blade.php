@@ -7,7 +7,7 @@
   <title>@yield('title', 'Admin') — Richierich</title>
   <link rel="icon" href="{{ asset('favicon.ico') }}?v=3" sizes="any" />
   <link rel="icon" href="{{ asset('assets/dress_icon-192.png') }}?v=3" type="image/png" />
-  <link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v=8" />
+  <link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v=10" />
   @stack('head')
 </head>
 <body>
@@ -72,17 +72,18 @@
       </header>
 
       <div class="admin-content">
-        @if($canSwitchStore ?? false)
+        @if(! request()->routeIs('admin.categories.*') && ($canSwitchStore ?? false))
           <form class="admin-storebar" method="POST" action="{{ route('admin.stores.switch') }}">
             @csrf
             <label for="admin-store">Store</label>
             <select id="admin-store" name="store_id" onchange="this.form.submit()">
+              <option value="all" @selected(($currentStore->id ?? null) === null)>All</option>
               @foreach($adminStores as $storeOption)
                 <option value="{{ $storeOption->id }}" @selected(($currentStore->id ?? null) === $storeOption->id)>{{ $storeOption->name }}{{ $storeOption->location ? ' · '.$storeOption->location : '' }}</option>
               @endforeach
             </select>
           </form>
-        @elseif($currentStore ?? null)
+        @elseif(! request()->routeIs('admin.categories.*') && ($currentStore ?? null))
           <div class="admin-storebar">
             <span>Store</span>
             <strong>{{ $currentStore->name }}</strong>

@@ -30,16 +30,12 @@ class CurrentStore
             return $this->adminStore = Store::query()->find($user->store_id);
         }
 
-        $selected = session('admin_store_id');
-        $store = $selected ? Store::query()->find($selected) : null;
-        if (! $store) {
-            $store = $this->website();
-            if ($store) {
-                session(['admin_store_id' => $store->id]);
-            }
+        $selected = session('admin_store_scope');
+        if ($selected === null || $selected === '' || $selected === 'all') {
+            return $this->adminStore = null;
         }
 
-        return $this->adminStore = $store;
+        return $this->adminStore = Store::query()->find($selected);
     }
 
     public function adminId(): ?int
@@ -67,6 +63,11 @@ class CurrentStore
 
     public function owns(object $model): bool
     {
+        $user = Auth::user();
+        if ($user && $user->role === 'superadmin' && $this->adminId() === null) {
+            return true;
+        }
+
         $storeId = $this->adminId();
 
         return $storeId !== null && (int) ($model->store_id ?? 0) === $storeId;

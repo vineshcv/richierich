@@ -6,14 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Product;
+use App\Services\CurrentStore;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $products)
-    {
+    public function __construct(
+        private ProductService $products,
+        private CurrentStore $current,
+    ) {
     }
 
     public function index(Request $request): JsonResponse
@@ -40,6 +43,8 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
+        abort_unless($this->current->owns($product), 404);
+
         $product = $this->products->update(
             $product,
             $request->safe()->except('images'),
@@ -51,6 +56,8 @@ class ProductController extends Controller
 
     public function destroy(Product $product): JsonResponse
     {
+        abort_unless($this->current->owns($product), 404);
+
         $this->products->delete($product);
 
         return response()->json(['message' => 'Deleted']);

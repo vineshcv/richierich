@@ -68,6 +68,6 @@
     @endforelse
   </div>
 
-  <div class="pagination">{{ $orders->links() }}</div>
+  <div class="pagination">{{ $orders->links('admin.partials.pagination') }}</div>
 </div>
 @endsection

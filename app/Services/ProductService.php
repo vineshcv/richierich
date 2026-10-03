@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -42,7 +43,16 @@ class ProductService
 
         return DB::transaction(function () use ($data, $images) {
             $data = $this->resolveCategory($data);
-            $data['store_id'] = app(CurrentStore::class)->adminId();
+            $user = Auth::user();
+            $storeId = $user && $user->role === 'superadmin' && ! empty($data['store_id'])
+                ? (int) $data['store_id']
+                : app(CurrentStore::class)->adminId();
+            if (! $storeId) {
+                throw ValidationException::withMessages([
+                    'store' => 'Choose a store above before adding a product.',
+                ]);
+            }
+            $data['store_id'] = $storeId;
             $data['slug'] = Str::slug($data['name']).'-'.Str::lower(Str::random(4));
             $data['status'] = $data['status'] ?? 'active';
             $data['show_price'] = $data['show_price'] ?? true;

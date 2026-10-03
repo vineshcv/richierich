@@ -6,20 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Banner\StoreBannerRequest;
 use App\Models\Banner;
 use App\Services\BannerService;
+use App\Services\CurrentStore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BannerController extends Controller
 {
-    public function __construct(private BannerService $banners)
-    {
+    public function __construct(
+        private BannerService $banners,
+        private CurrentStore $current,
+    ) {
     }
 
     public function index(Request $request): JsonResponse
     {
         return response()->json([
             'data' => $this->banners->list($request->boolean('active_only')),
-            'max' => BannerService::MAX_BANNERS,
         ]);
     }
 
@@ -35,6 +37,8 @@ class BannerController extends Controller
 
     public function destroy(Banner $banner): JsonResponse
     {
+        abort_unless($this->current->owns($banner), 404);
+
         $this->banners->delete($banner);
 
         return response()->json(['message' => 'Deleted']);

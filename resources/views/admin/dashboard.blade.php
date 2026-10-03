@@ -23,7 +23,7 @@
   </div>
   <div class="stat">
     <span>Banners</span>
-    <strong>{{ $bannerCount }} / {{ $bannerMax }}</strong>
+    <strong>{{ $bannerCount }}</strong>
     <a href="{{ route('admin.banners.index') }}">Manage banners →</a>
   </div>
 </div>

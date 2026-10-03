@@ -155,6 +155,6 @@
     @endforelse
   </div>
 
-  <div class="pagination">{{ $products->withQueryString()->links() }}</div>
+  <div class="pagination">{{ $products->withQueryString()->links('admin.partials.pagination') }}</div>
 </div>
 @endsection

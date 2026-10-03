@@ -71,6 +71,9 @@ class StoreProductRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'store_id' => $this->user()?->role === 'superadmin'
+                ? ['nullable', 'integer', 'exists:stores,id']
+                : ['prohibited'],
             'name' => ['required', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
             'category_id' => ['nullable', 'integer', 'exists:categories,id', 'required_without:category_name'],

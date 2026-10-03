@@ -23,7 +23,6 @@ class BannerController extends Controller
     {
         return view('admin.banners.index', [
             'banners' => $this->banners->list(),
-            'max' => BannerService::MAX_BANNERS,
         ]);
     }
 

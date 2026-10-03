@@ -19,6 +19,10 @@
     @csrf
     @if($isEdit) @method('PUT') @endif
 
+    @if(! $isEdit && ($chooseStore ?? false))
+      <div class="alert alert-error">Choose a store above before adding a product.</div>
+    @endif
+
     <div class="form-grid">
       <div class="field full">
         <label for="name">Name *</label>

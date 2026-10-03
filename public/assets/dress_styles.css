@@ -595,16 +595,14 @@ a {
 }
 
 .category-card-media {
-  aspect-ratio: 3 / 2.45;
   overflow: hidden;
   background: #f6f1ea;
 }
 
 .category-card-media img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  height: auto;
+  display: block;
 }
 
 .category-card-foot {
@@ -2720,6 +2718,11 @@ html.product-zoom-open body {
   font-weight: 500;
   font-size: 1.85rem;
   color: #2c2118;
+}
+
+.contact-address {
+  color: #2c2118;
+  font-weight: 600;
 }
 
 .contact-card > p,

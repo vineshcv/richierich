@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Store;
 use App\Models\User;
+use App\Services\CurrentStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -13,12 +14,15 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(CurrentStore $current): View
     {
+        $storeId = $current->adminId();
+
         return view('admin.users.index', [
             'users' => User::query()
                 ->with('store')
                 ->whereIn('role', ['superadmin', 'store_admin'])
+                ->when($storeId, fn ($query) => $query->where('store_id', $storeId))
                 ->orderBy('username')
                 ->get(),
         ]);

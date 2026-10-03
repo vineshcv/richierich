@@ -21,13 +21,13 @@ Route::get('/combos', [ShopController::class, 'combos'])->name('shop.combos');
 Route::get('/season', [ShopController::class, 'season'])->name('shop.season');
 Route::get('/bulk', [ShopController::class, 'bulk'])->name('shop.bulk');
 Route::get('/product/{slug}', [ShopController::class, 'show'])->name('shop.show');
-Route::post('/checkout/razorpay', [RazorpayController::class, 'create'])->name('checkout.razorpay');
-Route::post('/checkout/razorpay/verify', [RazorpayController::class, 'verify'])->name('checkout.razorpay.verify');
-Route::post('/checkout/login', [RazorpayController::class, 'login'])->middleware('throttle:8,1')->name('checkout.login');
+Route::post('/checkout/razorpay', [RazorpayController::class, 'create'])->middleware('throttle:60,1')->name('checkout.razorpay');
+Route::post('/checkout/razorpay/verify', [RazorpayController::class, 'verify'])->middleware('throttle:60,1')->name('checkout.razorpay.verify');
+Route::post('/checkout/login', [RazorpayController::class, 'login'])->middleware('throttle:30,1')->name('checkout.login');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminAuthController::class, 'showLogin'])->name('login');
-    Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
+    Route::post('login', [AdminAuthController::class, 'login'])->middleware('throttle:5,1')->name('login.submit');
 
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');

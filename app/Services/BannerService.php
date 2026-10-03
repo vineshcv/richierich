@@ -5,12 +5,9 @@ namespace App\Services;
 use App\Models\Banner;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 
 class BannerService
 {
-    public const MAX_BANNERS = 5;
-
     public function list(bool $activeOnly = false)
     {
         $storeId = request()->is('admin', 'admin/*')
@@ -27,13 +24,6 @@ class BannerService
 
     public function create(array $data, UploadedFile $image): Banner
     {
-        $storeId = app(CurrentStore::class)->adminId();
-        if ($storeId && Banner::query()->where('store_id', $storeId)->count() >= self::MAX_BANNERS) {
-            throw ValidationException::withMessages([
-                'image' => ['Maximum of '.self::MAX_BANNERS.' banners allowed.'],
-            ]);
-        }
-
         $data['image_path'] = $image->store('banners', 'public');
         $data['store_id'] = app(CurrentStore::class)->adminId();
         $data['sort_order'] = $data['sort_order'] ?? ((int) Banner::query()->where('store_id', $data['store_id'])->max('sort_order') + 1);

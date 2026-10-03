@@ -12,11 +12,11 @@ class EnsureAdmin
     {
         $user = $request->user();
         if (! $user || ! in_array($user->role, ['superadmin', 'store_admin'], true) || $user->status !== 'active') {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                abort(403);
+            }
             if ($user) {
                 auth()->logout();
-            }
-            if ($request->expectsJson()) {
-                abort(403);
             }
 
             return redirect()->route('home');

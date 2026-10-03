@@ -3,7 +3,7 @@
 @section('title', 'Banners')
 @section('heading', 'Banners')
 @section('subheading')
-  Home carousel — max {{ $max }} banners, 1MB each
+  Home carousel — 1MB each
 @endsection
 
 @section('content')
@@ -60,7 +60,6 @@
   @endforelse
 </div>
 
-@if($banners->count() < $max)
 <div class="card">
   <h2 style="margin-top:0;font-size:1.15rem;">Add banner</h2>
   <form method="POST" action="{{ route('admin.banners.store') }}" enctype="multipart/form-data" class="form-grid">
@@ -94,9 +93,4 @@
     </div>
   </form>
 </div>
-@else
-<div class="card">
-  <p class="muted" style="margin:0;">Banner limit reached ({{ $max }}). Delete one to add another.</p>
-</div>
-@endif
 @endsection

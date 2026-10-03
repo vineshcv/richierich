@@ -18,6 +18,13 @@ class AuthService
 
         /** @var User $user */
         $user = Auth::guard('api')->user();
+        if (! in_array($user->role, ['superadmin', 'store_admin'], true) || $user->status !== 'active') {
+            Auth::guard('api')->logout();
+
+            throw ValidationException::withMessages([
+                'email' => ['Invalid email or password.'],
+            ]);
+        }
 
         return [
             'access_token' => $token,

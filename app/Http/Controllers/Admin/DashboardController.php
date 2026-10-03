@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Order;
 use App\Models\Product;
-use App\Services\BannerService;
 use App\Services\CategoryService;
 use App\Services\CurrentStore;
 use Illuminate\View\View;
@@ -22,7 +21,6 @@ class DashboardController extends Controller
             'bannerCount' => Banner::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
             'categoryCount' => $categories->search()->count(),
             'orderCount' => Order::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
-            'bannerMax' => BannerService::MAX_BANNERS,
         ]);
     }
 }

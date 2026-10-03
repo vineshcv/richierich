@@ -40,7 +40,7 @@ class CategoryService
             $data['image_path'] = $image->store('categories', 'public');
         }
         $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
-        $data['store_id'] = $data['store_id'] ?? app(CurrentStore::class)->adminId();
+        $data['store_id'] = null;
 
         return Category::create($data);
     }

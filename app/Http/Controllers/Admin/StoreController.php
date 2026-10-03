@@ -35,7 +35,7 @@ class StoreController extends Controller
         $data['is_default'] = Store::query()->doesntExist();
 
         $store = Store::query()->create($data);
-        session(['admin_store_id' => $store->id]);
+        session(['admin_store_scope' => $store->id]);
 
         return redirect()->route('admin.stores.index')->with('success', 'Store created.');
     }
@@ -71,8 +71,8 @@ class StoreController extends Controller
             Store::query()->orderBy('id')->limit(1)->update(['is_default' => true]);
         }
 
-        if ((int) session('admin_store_id') === $store->id) {
-            session()->forget('admin_store_id');
+        if ((int) session('admin_store_scope') === $store->id) {
+            session(['admin_store_scope' => 'all']);
         }
 
         return redirect()->route('admin.stores.index')->with('success', 'Store deleted.');
@@ -84,11 +84,17 @@ class StoreController extends Controller
             abort(403);
         }
 
+        if ($request->input('store_id') === 'all') {
+            session(['admin_store_scope' => 'all']);
+
+            return back();
+        }
+
         $data = $request->validate([
             'store_id' => ['required', 'integer', 'exists:stores,id'],
         ]);
 
-        session(['admin_store_id' => (int) $data['store_id']]);
+        session(['admin_store_scope' => (int) $data['store_id']]);
 
         return back();
     }

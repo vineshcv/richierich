@@ -35,12 +35,24 @@ class ProductController extends Controller
         return view('admin.products.form', [
             'product' => new Product(),
             'categories' => $this->categories->search(),
+            'chooseStore' => $this->current->canSwitch() && ! $this->current->adminId(),
         ]);
     }
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        $this->products->create($request->safe()->except('images'), $request->file('images') ?: []);
+        if ($this->current->canSwitch() && ! $this->current->adminId()) {
+            return back()->withInput()->withErrors([
+                'store' => 'Choose a store above before adding a product.',
+            ]);
+        }
+
+        $payload = $request->safe()->except('images');
+        if ($storeId = $this->current->adminId()) {
+            $payload['store_id'] = $storeId;
+        }
+
+        $this->products->create($payload, $request->file('images') ?: []);
 
         return redirect()->route('admin.products.index')->with('success', 'Product created.');
     }

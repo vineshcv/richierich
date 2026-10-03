@@ -38,6 +38,7 @@
     <div class="contact-card">
       <h2>Get in touch</h2>
       <p>Have a question or need help with sizes, fabrics or availability? We’re here to help.</p>
+      <p class="contact-address">Ground Floor, Selex Mall<br>Anjangadi, Thrissur East<br>PIN 68005</p>
       @if($wa)
         <div class="contact-wa">
           <span class="contact-wa-badge" aria-hidden="true">
