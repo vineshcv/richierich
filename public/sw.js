@@ -1,5 +1,5 @@
 /* Richie Rich PWA service worker — dress demo parity */
-var CACHE_VERSION = "richierich-v6";
+var CACHE_VERSION = "richierich-v8";
 var SHELL_CACHE = CACHE_VERSION + "-shell";
 var RUNTIME_CACHE = CACHE_VERSION + "-runtime";
 var OFFLINE_FALLBACK = "./";

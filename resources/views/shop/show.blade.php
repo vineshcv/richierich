@@ -8,11 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
-  <meta property="og:title" content="{{ $product->name }}" />
-  <meta property="og:description" content="{{ \Illuminate\Support\Str::limit(strip_tags($product->description ?: $product->name), 160) }}" />
-  @if($product->primary_image_url)
-    <meta property="og:image" content="{{ $product->primary_image_url }}" />
-  @endif
 @endpush
 
 @section('content')

@@ -50,9 +50,6 @@ const WA_ICON =
 const SHARE_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>';
 
-const HEART_ICON =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 20s-7-4.4-7-9a4 4 0 017-2 4 4 0 017 2c0 4.6-7 9-7 9z"/></svg>';
-
 const DETAIL_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>';
 
@@ -712,9 +709,7 @@ function productCardHtml(p, home) {
     '<button type="button" class="share-icon-btn" data-share="' +
     p.id +
     '" aria-label="Share" title="Share">' +
-    (home
-      ? '<span class="home-heart-ico">' + HEART_ICON + '</span><span class="home-share-ico">' + SHARE_ICON + "</span>"
-      : SHARE_ICON) +
+    SHARE_ICON +
     "</button>" +
     (p.price ? '<div class="shop-price">' + p.price + "</div>" : "") +
     "</div>" +
@@ -860,13 +855,24 @@ function initBannerRail() {
     })
     .join("");
 
+  function pageSize() {
+    var card = cards[0];
+    if (!card || !cards[1]) return 1;
+    var stride = cards[1].offsetLeft - card.offsetLeft;
+    if (!stride) return 1;
+    return Math.max(1, Math.round((rail.clientWidth + 4) / stride));
+  }
+
+  function maxIndex() {
+    return Math.max(0, cards.length - pageSize());
+  }
+
   function activeIndex() {
-    var center = rail.scrollLeft + rail.clientWidth / 2;
+    var origin = cards[0].offsetLeft;
     var best = 0;
     var bestDist = Infinity;
     cards.forEach(function (card, i) {
-      var mid = card.offsetLeft + card.offsetWidth / 2;
-      var d = Math.abs(mid - center);
+      var d = Math.abs(card.offsetLeft - origin - rail.scrollLeft);
       if (d < bestDist) {
         bestDist = d;
         best = i;
@@ -882,6 +888,9 @@ function initBannerRail() {
   }
 
   function goTo(i) {
+    var max = maxIndex();
+    if (i < 0) i = 0;
+    if (i > max) i = max;
     var card = cards[i];
     if (!card) return;
     var left = card.offsetLeft - cards[0].offsetLeft;
@@ -904,34 +913,28 @@ function initBannerRail() {
   });
 
   var timer = null;
+  var paused = false;
 
-  function fitsAll() {
-    return rail.scrollWidth <= rail.clientWidth + 8;
-  }
+  rail.addEventListener("mouseenter", function () { paused = true; });
+  rail.addEventListener("mouseleave", function () { paused = false; });
+  rail.addEventListener("pointerdown", function () { paused = true; });
+  rail.addEventListener("pointerup", function () {
+    window.setTimeout(function () { paused = false; }, 4000);
+  });
 
   function startAuto() {
     if (timer) {
       clearInterval(timer);
       timer = null;
     }
-    if (fitsAll()) {
-      setDots(cards.length > 2 ? 1 : 0);
-      return;
-    }
+    if (cards.length <= pageSize()) return;
     timer = setInterval(function () {
-      if (document.hidden || fitsAll()) return;
-      var next = (activeIndex() + 1) % cards.length;
-      goTo(next);
-    }, 4200);
+      if (document.hidden || paused) return;
+      if (cards.length <= pageSize()) return;
+      var current = activeIndex();
+      goTo(current >= maxIndex() ? 0 : current + 1);
+    }, 4000);
   }
-
-  rail.addEventListener(
-    "pointerdown",
-    function () {
-      if (timer) clearInterval(timer);
-    },
-    { once: true }
-  );
 
   window.addEventListener("resize", startAuto);
   startAuto();
@@ -1678,9 +1681,7 @@ function renderProductDetailPage(id) {
         '">' +
         CART_ICON +
         " Add to Cart</button>") +
-    '<button type="button" class="detail-wish" aria-label="Save" aria-pressed="false">' +
-    HEART_ICON +
-    "</button></div>" +
+    "</div>" +
     '<p class="detail-assure">Easy shipping · Hassle-free returns</p>' +
     "</div>" +
     factsHtml +
@@ -1746,13 +1747,6 @@ function renderProductDetailPage(id) {
       input.value = String(Math.max(1, nextQty));
     });
   });
-  var wish = root.querySelector(".detail-wish");
-  if (wish) {
-    wish.addEventListener("click", function () {
-      var on = wish.getAttribute("aria-pressed") === "true";
-      wish.setAttribute("aria-pressed", on ? "false" : "true");
-    });
-  }
   var copyBtn = root.querySelector("[data-copy-link]");
   if (copyBtn) {
     copyBtn.addEventListener("click", function () {

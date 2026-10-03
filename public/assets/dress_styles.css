@@ -60,27 +60,6 @@ a {
   border-bottom: 0;
 }
 
-.header-flora {
-  pointer-events: none;
-}
-
-.header-flora-left,
-.header-flora-right {
-  position: absolute;
-  top: 0;
-  width: 64px;
-  height: 82px;
-  z-index: 0;
-}
-
-.header-flora-left {
-  left: 0;
-}
-
-.header-flora-right {
-  right: 0;
-}
-
 .navbar {
   position: relative;
   z-index: 1;
@@ -221,8 +200,40 @@ a {
 }
 
 .dress-top {
+  --art-gutter: max(4.5rem, calc((100vw - min(1140px, calc(100vw - 4.5rem))) / 2));
+  --art-size: min(13.5rem, calc(var(--art-gutter) + 1.6rem));
+  --art-cut: max(0px, calc(var(--art-size) - var(--art-gutter)));
+  position: relative;
+  overflow: visible;
   background: #fff;
   padding: 0.55rem 0 1.15rem;
+}
+
+.dress-top::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  right: 44px;
+  z-index: 9;
+  width: var(--art-size);
+  height: calc(var(--art-size) * 1024 / 745);
+  background: url("dress_banner_art.jpg?v=1") left top / 100% 100% no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.3;
+  pointer-events: none;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    var(--art-cut) 100%,
+    var(--art-cut) 4.6rem,
+    0 4.6rem
+  );
+}
+
+.dress-top .container {
+  position: relative;
+  z-index: 1;
 }
 
 .dress-search {
@@ -309,14 +320,19 @@ a {
 }
 
 .banner-wrap {
+  position: relative;
+  z-index: 3;
   margin-top: 0.15rem;
 }
 
 .banner-rail {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
   gap: 0.95rem;
-  overflow: visible;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .banner-rail::-webkit-scrollbar {
@@ -324,7 +340,9 @@ a {
 }
 
 .banner-card {
+  flex: 0 0 calc((100% - 1.9rem) / 3);
   min-width: 0;
+  scroll-snap-align: start;
   border-radius: 1.05rem;
   overflow: hidden;
   background: #f3ebe3;
@@ -377,6 +395,10 @@ a {
 }
 
 @media (max-width: 900px) {
+  .dress-top::before {
+    content: none;
+  }
+
   .banner-rail {
     display: flex;
     gap: 0.75rem;
@@ -564,18 +586,12 @@ a {
   width: calc((100% - 4.25rem) / 6);
   scroll-snap-align: start;
   min-width: 0;
-  background: #fff;
-  border: 1px solid rgba(59, 36, 22, 0.05);
+  background: transparent;
+  border: 0;
   border-radius: 1.15rem;
   overflow: hidden;
-  box-shadow: 0 12px 28px rgba(59, 36, 22, 0.07);
+  box-shadow: none;
   text-align: left;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.category-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 34px rgba(59, 36, 22, 0.12);
 }
 
 .category-card-media {
@@ -732,10 +748,6 @@ a {
   background: #fff;
   color: #4a372c;
   box-shadow: 0 4px 12px rgba(38, 20, 10, 0.14);
-}
-
-:is(#home-category-sections, #related-section) .home-share-ico {
-  display: none;
 }
 
 :is(#home-category-sections, #related-section) .share-icon-btn:hover {
@@ -2414,22 +2426,6 @@ body.page-cart .cart-product-card {
   height: 1.05rem;
 }
 
-.detail-wish {
-  width: 2.7rem;
-  height: 2.7rem;
-  border-radius: 999px;
-  border: 1px solid #e6dfd6;
-  background: #fff;
-  color: #3b2416;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.detail-wish svg { width: 1.1rem; height: 1.1rem; }
-.detail-wish[aria-pressed="true"] { background: #26140a; color: #fff; }
-
 .detail-assure {
   margin: 0.8rem 0 0;
   color: #8d837b;
@@ -2942,7 +2938,7 @@ html.product-zoom-open body {
 }
 
 .site-footer {
-  margin-top: 1rem;
+  margin-top: 0;
   background: #26140a;
   color: rgba(255, 255, 255, 0.78);
 }
@@ -2991,6 +2987,23 @@ html.product-zoom-open body {
   color: rgba(255, 255, 255, 0.5);
 }
 
+.footer-bottom .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-credit {
+  margin-left: auto;
+  color: inherit;
+}
+
+.footer-credit:hover {
+  color: #fff;
+}
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -3010,10 +3023,6 @@ html.product-zoom-open body {
   /* keep logo header; hide old top burger (bottom bar replaces it) */
   .site-header {
     backdrop-filter: none;
-  }
-
-  .header-flora {
-    display: none;
   }
 
   .navbar {

@@ -31,7 +31,7 @@
 
     <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin menu">
       <div class="admin-brand">
-        <img src="{{ asset('assets/dress_logo.png') }}?v=4" alt="Richierich" />
+        <img src="{{ asset('assets/dress_logo.png') }}?v=6" alt="Richierich" />
         <div>
           <strong>Richierich</strong>
           <span>Admin panel</span>

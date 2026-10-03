@@ -39,6 +39,17 @@ return new class extends Migration
 
         DB::table('products')->where('sku', '')->update(['sku' => null]);
 
+        $seen = [];
+        DB::table('products')->whereNotNull('sku')->orderBy('id')->get(['id', 'sku'])->each(function ($product) use (&$seen) {
+            $key = mb_strtolower((string) $product->sku);
+            if (isset($seen[$key])) {
+                DB::table('products')->where('id', $product->id)->update(['sku' => null]);
+
+                return;
+            }
+            $seen[$key] = $product->id;
+        });
+
         $indexes = collect(DB::select('SHOW INDEX FROM products WHERE Column_name = ?', ['sku']))
             ->pluck('Key_name')
             ->unique();
