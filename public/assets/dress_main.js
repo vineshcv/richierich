@@ -188,7 +188,6 @@ function wireNav() {
     products: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h10"/></svg>',
     combos: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7l8-4 8 4-8 4-8-4z"/><path stroke-linecap="round" stroke-linejoin="round" d="M4 12l8 4 8-4M4 17l8 4 8-4"/></svg>',
     cart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>',
-    menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="M5 7h14M5 12h14M5 17h14"/></svg>',
   };
 
   function pageKey() {
@@ -243,26 +242,19 @@ function wireNav() {
     "<span>Contact</span></a>" +
     '<a class="dress-bottom-item dress-bottom-cart" data-tab="cart" href="' + dressRoute("cart") + '">' +
     ICONS.cart +
-    '<span>Cart</span><em data-cart-count hidden>0</em></a>' +
-    '<button type="button" class="dress-bottom-menu" aria-label="Open menu" aria-expanded="false">' +
-    ICONS.menu +
-    "</button>";
+    '<span>Cart</span><em data-cart-count hidden>0</em></a>';
   document.body.appendChild(dock);
 
-  var menuBtn = dock.querySelector(".dress-bottom-menu");
   var active = pageKey();
   dock.querySelectorAll("[data-tab]").forEach(function (el) {
     if (el.getAttribute("data-tab") === active) el.classList.add("is-active");
   });
-  if (active === "more") menuBtn.classList.add("is-active");
 
   function setOpen(open) {
     placeMenuForViewport();
     menu.classList.toggle("open", open);
     backdrop.classList.toggle("open", open);
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
     document.documentElement.classList.toggle("dress-nav-open", open);
   }
 
@@ -274,7 +266,6 @@ function wireNav() {
     setOpen(!menu.classList.contains("open"));
   }
 
-  menuBtn.addEventListener("click", toggleMenu);
   toggle.addEventListener("click", toggleMenu);
 
   backdrop.addEventListener("click", function () {

@@ -5,9 +5,7 @@
 @section('meta_description', 'Contact Richierich. Enquire on WhatsApp.')
 
 @push('head')
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+  @include('partials.playfair')
 @endpush
 
 @section('content')
@@ -38,7 +36,7 @@
     <div class="contact-card">
       <h2>Get in touch</h2>
       <p>Have a question or need help with sizes, fabrics or availability? We’re here to help.</p>
-      <p class="contact-address">Ground Floor, Selex Mall<br>Anjangadi, Thrissur East<br>PIN 68005</p>
+      <p class="contact-address">Ground Floor, Selex Mall<br>Anjangadi, Thrissur East<br>PIN 680005</p>
       @if($wa)
         <div class="contact-wa">
           <span class="contact-wa-badge" aria-hidden="true">

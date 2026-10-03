@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  @stack('preload')
   @php
     $shareTitle = trim($__env->yieldContent('title'));
     if ($shareTitle === '') {
@@ -40,22 +41,16 @@
   <meta name="twitter:image:alt" content="Richierich" />
   <link rel="icon" href="{{ asset('favicon.ico') }}?v=3" sizes="any" />
   <link rel="icon" href="{{ asset('assets/dress_icon-192.png') }}?v=3" type="image/png" />
-  <link rel="manifest" href="{{ asset('manifest.webmanifest') }}" />
-  <meta name="theme-color" content="#26140a" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Richierich" />
   <link rel="apple-touch-icon" href="{{ asset('assets/dress_apple-touch-icon.png') }}?v=3" />
-  <link rel="stylesheet" href="{{ asset('assets/dress_styles.css') }}?v=128" />
+  <link rel="stylesheet" href="{{ asset('assets/dress_styles.css') }}?v=130" />
   @include('partials.dress-config')
-  <script src="{{ asset('assets/dress_loader.js') }}?v=9"></script>
+  <script src="{{ asset('assets/dress_loader.js') }}?v=12"></script>
   @stack('head')
 </head>
 <body class="@yield('body_class')" data-dress-page="@yield('dress_page', 'home')">
   <header class="site-header">
     <div class="container navbar">
-      <a class="logo" href="{{ route('home') }}"><img src="{{ asset('assets/dress_logo.png') }}?v=6" alt="Richierich" /></a>
+      <a class="logo" href="{{ route('home') }}"><img src="{{ asset('assets/dress_logo.webp') }}?v=7" alt="Richierich" width="776" height="160" /></a>
       <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -81,7 +76,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <a class="logo" href="{{ route('home') }}"><img src="{{ asset('assets/dress_logo.png') }}?v=6" alt="Richierich" /></a>
+        <a class="logo" href="{{ route('home') }}"><img src="{{ asset('assets/dress_logo.webp') }}?v=7" alt="Richierich" width="776" height="160" /></a>
         <p>Ethnic & western dresses, look sets and festive edits — enquire on WhatsApp.</p>
       </div>
       <div class="footer-col">
@@ -106,7 +101,7 @@
       <div class="footer-col">
         <h4>Contact</h4>
         <ul>
-          <li>Ground Floor, Selex Mall, Anjangadi, Thrissur East, PIN 68005</li>
+          <li>Ground Floor, Selex Mall, Anjangadi, Thrissur East, PIN 680005</li>
           @php $wa = \App\Models\Store::siteWhatsapp(); @endphp
           @if(($settings->show_whatsapp ?? true) && $wa)
             <li><a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
@@ -123,10 +118,9 @@
     </div>
   </footer>
 
-  <script src="{{ asset('assets/dress_main.js') }}?v=83"></script>
+  <script src="{{ asset('assets/dress_main.js') }}?v=84"></script>
   <script src="{{ asset('assets/dress_cart.js') }}?v=8"></script>
   @stack('scripts')
-  <script src="{{ asset('assets/dress_pwa.js') }}?v=3"></script>
   <script src="{{ asset('assets/azores_share.js') }}?v=4"></script>
 </body>
 </html>

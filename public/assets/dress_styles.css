@@ -3129,36 +3129,6 @@ html.product-zoom-open body {
     display: none !important;
   }
 
-  .dress-bottom-menu {
-    flex: 0 0 auto;
-    width: 48px;
-    height: 48px;
-    margin: 0 0.15rem 0 0.25rem;
-    border: 0;
-    border-radius: 999px;
-    cursor: pointer;
-    color: #fff;
-    background: #26140a;
-    box-shadow: 0 8px 18px rgba(38, 20, 10, 0.28);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dress-bottom-menu svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .dress-bottom-menu[aria-expanded="true"] {
-    background: var(--secondary);
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.22);
-  }
-
-  .dress-bottom-menu.is-active:not([aria-expanded="true"]) {
-    box-shadow: 0 8px 18px rgba(159, 18, 57, 0.4);
-  }
-
   /* remaining links open upward above the bottom bar */
   .nav-menu {
     display: flex;
@@ -3222,18 +3192,6 @@ html.product-zoom-open body {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-  }
-
-  html.dress-pwa-open .dress-bottom-nav {
-    bottom: calc(4.85rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  html.dress-pwa-open .nav-menu {
-    bottom: calc(9.7rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  html.dress-pwa-open body {
-    padding-bottom: calc(10.5rem + env(safe-area-inset-bottom, 0px));
   }
 
   .detail-layout,
@@ -3804,134 +3762,6 @@ html.dress-modal-open body {
   background: transparent;
   border: 1px solid var(--line);
   color: var(--text);
-}
-
-/* PWA install banner */
-#dress-pwa-banner {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 100000;
-  padding: 0.75rem 0.85rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
-  background: #fff;
-  border-top: 1px solid var(--line);
-  box-shadow: 0 -10px 28px rgba(15, 23, 42, 0.12);
-  transform: translateY(110%);
-  transition: transform 0.28s ease;
-}
-
-#dress-pwa-banner.is-visible {
-  transform: translateY(0);
-}
-
-.dress-pwa-inner {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.dress-pwa-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  flex-shrink: 0;
-  background: #fff1f2;
-}
-
-.dress-pwa-copy {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.dress-pwa-copy strong {
-  font-size: 0.92rem;
-  color: var(--secondary);
-  line-height: 1.25;
-}
-
-.dress-pwa-sub {
-  font-size: 0.78rem;
-  color: var(--muted);
-  line-height: 1.35;
-}
-
-.dress-pwa-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  flex-shrink: 0;
-}
-
-.dress-pwa-install {
-  border: 0;
-  border-radius: 999px;
-  background: var(--primary);
-  color: #fff;
-  font: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 0.55rem 0.95rem;
-  cursor: pointer;
-}
-
-.dress-pwa-install:active {
-  background: var(--primary-dark);
-}
-
-.dress-pwa-close {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 1.35rem;
-  line-height: 1;
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-  border-radius: 999px;
-}
-
-.dress-pwa-close:hover {
-  background: #f1f5f9;
-  color: var(--secondary);
-}
-
-.dress-pwa-ios-steps {
-  max-width: 720px;
-  margin: 0.75rem auto 0;
-  padding: 0.75rem 0.9rem;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid var(--line);
-}
-
-#dress-pwa-banner:not(.is-expanded) .dress-pwa-ios-steps {
-  display: none;
-}
-
-#dress-pwa-banner.is-expanded .dress-pwa-ios-steps {
-  display: block;
-}
-
-.dress-pwa-ios-steps ol {
-  margin: 0;
-  padding-left: 1.15rem;
-  color: var(--text);
-  font-size: 0.84rem;
-  line-height: 1.55;
-}
-
-.dress-pwa-ios-steps li + li {
-  margin-top: 0.35rem;
-}
-
-html.dress-pwa-open body {
-  padding-bottom: 5.5rem;
 }
 
 /* Product detail: desktop modal / mobile bottom sheet */

@@ -4,7 +4,7 @@
 @section('title', 'Custom order — Richierich')
 
 @section('content')
-@php $wa = preg_replace('/\D+/', '', $settings->whatsapp_number ?? ''); @endphp
+@php $wa = \App\Models\Store::siteWhatsapp(); @endphp
 <section class="page-hero">
   <div class="container">
     <div class="breadcrumb">

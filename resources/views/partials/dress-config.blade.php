@@ -6,11 +6,10 @@
   window.DRESS_CONFIG = {
     whatsapp: @json($waDigits),
     siteName: @json('Richierich'),
-    logo: @json(asset('assets/dress_logo.png').'?v=6'),
-    mark: @json(asset('assets/dress_mark.png').'?v=1'),
+    logo: @json(asset('assets/dress_logo.webp').'?v=7'),
+    mark: @json(asset('assets/dress_mark.webp').'?v=2'),
     icon: @json(asset('assets/dress_icon-192.png').'?v=3'),
     defaultImage: @json(asset('assets/dress_prod-red-saree.png')),
-    sw: @json(asset('sw.js')),
     routes: {
       home: @json(route('home')),
       shop: @json(route('shop.products')),

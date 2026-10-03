@@ -19,15 +19,59 @@ class OrderController extends Controller
     ) {
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
         $storeId = $this->current->adminId();
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:120'],
+            'status' => ['nullable', Rule::in(['pending', 'paid', 'cancelled'])],
+            'fulfillment' => ['nullable', Rule::in(['none', 'received', 'processing', 'ready', 'shipped'])],
+            'payment_method' => ['nullable', Rule::in(['card', 'upi', 'netbanking', 'wallet', 'emi', 'paylater'])],
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+            'sort' => ['nullable', Rule::in(['created_at', 'customer_name', 'amount', 'status', 'fulfillment_status', 'payment_method'])],
+            'dir' => ['nullable', Rule::in(['asc', 'desc'])],
+            'per_page' => ['nullable', Rule::in(['10', '20', '50'])],
+        ]);
+
+        $sort = $filters['sort'] ?? 'created_at';
+        $dir = $filters['dir'] ?? 'desc';
+        $perPage = (int) ($filters['per_page'] ?? 20);
+        $search = trim((string) ($filters['q'] ?? ''));
+
+        $orders = Order::query()
+            ->when($storeId, fn ($query) => $query->where('store_id', $storeId))
+            ->when($search !== '', function ($query) use ($search) {
+                $query->where(function ($inner) use ($search) {
+                    $inner->where('razorpay_order_id', 'like', "%{$search}%")
+                        ->orWhere('customer_name', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->when(! empty($filters['status']), fn ($query) => $query->where('status', $filters['status']))
+            ->when(($filters['fulfillment'] ?? null) === 'none', fn ($query) => $query->whereNull('fulfillment_status'))
+            ->when(in_array($filters['fulfillment'] ?? null, ['received', 'processing', 'ready', 'shipped'], true), fn ($query) => $query->where('fulfillment_status', $filters['fulfillment']))
+            ->when(! empty($filters['payment_method']), fn ($query) => $query->where('payment_method', $filters['payment_method']))
+            ->when(! empty($filters['from']), fn ($query) => $query->whereDate('created_at', '>=', $filters['from']))
+            ->when(! empty($filters['to']), fn ($query) => $query->whereDate('created_at', '<=', $filters['to']))
+            ->tap(function ($query) use ($sort, $dir) {
+                if ($sort === 'status') {
+                    $query->orderByRaw("CASE status WHEN 'paid' THEN 1 WHEN 'pending' THEN 2 WHEN 'cancelled' THEN 3 ELSE 4 END {$dir}");
+                } elseif ($sort === 'fulfillment_status') {
+                    $query->orderByRaw("CASE fulfillment_status WHEN 'received' THEN 1 WHEN 'processing' THEN 2 WHEN 'ready' THEN 3 WHEN 'shipped' THEN 4 ELSE 5 END {$dir}");
+                } else {
+                    $query->orderBy($sort, $dir);
+                }
+            })
+            ->orderByDesc('id')
+            ->paginate($perPage)
+            ->withQueryString();
 
         return view('admin.orders.index', [
-            'orders' => Order::query()
-                ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
-                ->latest()
-                ->paginate(20),
+            'orders' => $orders,
+            'sort' => $sort,
+            'dir' => $dir,
         ]);
     }
 

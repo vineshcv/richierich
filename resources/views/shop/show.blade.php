@@ -5,9 +5,7 @@
 @section('meta_description', \Illuminate\Support\Str::limit(strip_tags($product->description ?: $product->name), 160))
 
 @push('head')
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+  @include('partials.playfair')
 @endpush
 
 @section('content')

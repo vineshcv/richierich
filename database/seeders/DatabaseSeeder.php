@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             'show_whatsapp' => true,
             'show_cart' => true,
             'show_view' => true,
-            'whatsapp_number' => '919916399733',
+            'whatsapp_number' => '919567779354',
             'store_name' => 'Richie Rich',
         ]);
 

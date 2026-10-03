@@ -9,8 +9,6 @@ public_html/
   index.php                 ← use deploy/public_index.php
   .htaccess                 ← from public/.htaccess
   assets/
-  sw.js
-  manifest.webmanifest
   robots.txt (optional)
   deploy-install.php        ← delete after install
   storage/                  ← product/banner images (created by installer)
@@ -47,7 +45,7 @@ composer install --no-dev --optimize-autoloader
 2. Upload **everything except** the local `public/` folder into `public_html/richierich/`  
    (include `vendor/`, `storage/`, `bootstrap/`, etc.)
 3. Upload **contents of** local `public/` into `public_html/`  
-   (`assets`, `sw.js`, `manifest.webmanifest`, `deploy-install.php`, `.htaccess`, …)
+   (`assets`, `deploy-install.php`, `.htaccess`, …)
 4. Upload `deploy/public_index.php` as `public_html/index.php` (overwrite)
 5. Upload `deploy/env.production` as `public_html/richierich/.env`
 6. Edit `.env` on the server (FileZilla → View/Edit) and set:

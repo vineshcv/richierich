@@ -42,7 +42,7 @@
 
       <div class="field">
         <label for="whatsapp_number">WhatsApp number *</label>
-        <input id="whatsapp_number" type="text" name="whatsapp_number" inputmode="numeric" value="{{ old('whatsapp_number', $store->whatsapp_number) }}" placeholder="919916399733" required />
+        <input id="whatsapp_number" type="text" name="whatsapp_number" inputmode="numeric" value="{{ old('whatsapp_number', $store->whatsapp_number) }}" placeholder="919567779354" required />
         <p class="muted" style="font-size:0.8rem;margin:0.35rem 0 0;">Digits with country code. Product enquiries for this store open this chat.</p>
         @error('whatsapp_number')<div class="error">{{ $message }}</div>@enderror
       </div>

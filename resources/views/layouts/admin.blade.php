@@ -7,7 +7,7 @@
   <title>@yield('title', 'Admin') — Richierich</title>
   <link rel="icon" href="{{ asset('favicon.ico') }}?v=3" sizes="any" />
   <link rel="icon" href="{{ asset('assets/dress_icon-192.png') }}?v=3" type="image/png" />
-  <link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v=10" />
+  <link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v=11" />
   @stack('head')
 </head>
 <body>
@@ -31,7 +31,7 @@
 
     <aside class="admin-sidebar" id="admin-sidebar" aria-label="Admin menu">
       <div class="admin-brand">
-        <img src="{{ asset('assets/dress_logo.png') }}?v=6" alt="Richierich" />
+        <img src="{{ asset('assets/dress_logo.webp') }}?v=7" alt="Richierich" width="776" height="160" />
         <div>
           <strong>Richierich</strong>
           <span>Admin panel</span>

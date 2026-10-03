@@ -117,5 +117,3 @@ php artisan storage:link
 php artisan config:cache
 php artisan route:cache
 ```
-
-PWA (`manifest.webmanifest` + `sw.js`) uses relative URLs, so it works at this domain once the app is live at the root.

@@ -6,7 +6,7 @@
 <div class="login-wrap">
   <div class="card login-card">
     <div class="login-brand">
-      <img src="{{ asset('assets/dress_logo.png') }}?v=6" alt="Richierich" />
+      <img src="{{ asset('assets/dress_logo.webp') }}?v=7" alt="Richierich" width="776" height="160" />
       <div>
         <strong>Richierich</strong>
         <div class="muted" style="font-size:0.8rem;">Admin access</div>

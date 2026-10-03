@@ -325,6 +325,7 @@ input[type="number"],
 input[type="tel"],
 input[type="url"],
 input[type="search"],
+input[type="date"],
 input[type="file"],
 select,
 textarea {
@@ -365,6 +366,26 @@ textarea { min-height: 110px; resize: vertical; }
   margin-bottom: 1rem;
   align-items: end;
 }
+
+.order-filters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  align-items: end;
+}
+.order-filters-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.sort-link {
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.sort-link.is-active { color: #26140a; }
 
 .table-wrap {
   width: 100%;
@@ -594,7 +615,8 @@ a.admin-pager-btn:hover { background: #f6f0e6; }
   html.admin-nav-open body { overflow: hidden; }
   .admin-content { padding: 1rem 0.9rem 5.5rem; }
   .form-grid,
-  .toolbar { grid-template-columns: 1fr; }
+  .toolbar,
+  .order-filters { grid-template-columns: 1fr; }
   .stats { grid-template-columns: 1fr; }
   .admin-page-head h1 { font-size: 1.3rem; }
   .desktop-only { display: none !important; }

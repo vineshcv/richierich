@@ -3,10 +3,16 @@
 @section('dress_page', 'home')
 @section('title', 'Richierich — Ethnic & western dresses · WhatsApp enquire')
 
+@php $leadBanner = ($banners ?? collect())->first(); @endphp
+@push('preload')
+  @if($leadBanner)
+    <link rel="preload" as="image" href="{{ $leadBanner->image_url }}" fetchpriority="high" />
+  @else
+    <link rel="preload" as="image" href="{{ asset('assets/hero-style.jpg') }}" fetchpriority="high" />
+  @endif
+@endpush
 @push('head')
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
+  @include('partials.playfair')
 @endpush
 
 @section('content')
@@ -21,12 +27,12 @@
       <div class="banner-rail" id="banner-rail" tabindex="0" aria-label="Offers">
         @forelse($banners as $banner)
           <a class="banner-card" href="{{ $banner->link_url ?: route('shop.products') }}">
-            <img src="{{ $banner->image_url }}" alt="{{ $banner->title ?: 'Richierich banner' }}" />
+            <img src="{{ $banner->image_url }}" alt="{{ $banner->title ?: 'Richierich banner' }}" width="1100" height="655" @if($loop->first) fetchpriority="high" @else loading="lazy" @endif />
           </a>
         @empty
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-style.jpg') }}" alt="Celebrate every moment in style" /></a>
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-sarees.jpg') }}" alt="Elegant sarees" /></a>
-          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-kurtis.jpg') }}" alt="Trendy kurtis and sets" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-style.jpg') }}" alt="Celebrate every moment in style" width="1100" height="655" fetchpriority="high" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-sarees.jpg') }}" alt="Elegant sarees" width="1100" height="655" loading="lazy" /></a>
+          <a class="banner-card" href="{{ route('shop.products') }}"><img src="{{ asset('assets/hero-kurtis.jpg') }}" alt="Trendy kurtis and sets" width="1100" height="655" loading="lazy" /></a>
         @endforelse
       </div>
       <div class="banner-dots" id="banner-dots" aria-hidden="true"></div>

@@ -12,8 +12,6 @@ define('LARAVEL_START', microtime(true));
 |     index.php          ← this file
 |     .htaccess
 |     assets/
-|     sw.js
-|     manifest.webmanifest
 |     storage/           ← copy of storage/app/public (see deploy guide)
 |     richierich/           ← full Laravel app (app, vendor, .env, ...)
 */

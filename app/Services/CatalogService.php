@@ -175,7 +175,7 @@ class CatalogService
             }
         }
 
-        return asset('assets/dress_logo.png');
+        return asset('assets/dress_logo.webp');
     }
 
     private function webAssetExists(string $base): bool

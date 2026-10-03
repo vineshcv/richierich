@@ -1,6 +1,6 @@
 (function () {
   var isHome = document.documentElement.getAttribute("data-loader") === "1";
-  var LOADER_MIN_MS = 2400;
+  var LOADER_MIN_MS = 1500;
   var STYLE_ID = "dress-boot-style";
   var ROOT_ID = "dress-boot";
 
@@ -16,24 +16,16 @@
       "}" +
       "#" + ROOT_ID + ".is-done{opacity:0;visibility:hidden;pointer-events:none;}" +
       "#" + ROOT_ID + " .dress-boot-inner{" +
-      "display:flex;flex-direction:column;align-items:center;gap:.7rem;" +
+      "display:flex;flex-direction:column;align-items:center;" +
       "}" +
       "#" + ROOT_ID + " .dress-boot-logo{" +
       "width:72px;height:72px;display:block;object-fit:contain;" +
       "animation:dress-boot-in .7s ease both,dress-boot-pulse 1.4s ease .7s infinite;" +
       "}" +
-      "#" + ROOT_ID + " .dress-boot-text{" +
-      "margin:0;font-family:Arial,Helvetica,sans-serif;" +
-      "font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;" +
-      "color:#8b1e2d;font-weight:600;opacity:0;" +
-      "animation:dress-boot-fade .5s ease .35s forwards;" +
-      "}" +
       "@keyframes dress-boot-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}" +
       "@keyframes dress-boot-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}" +
-      "@keyframes dress-boot-fade{from{opacity:0}to{opacity:1}}" +
       "@media (prefers-reduced-motion:reduce){" +
       "#" + ROOT_ID + " .dress-boot-logo{animation:none}" +
-      "#" + ROOT_ID + " .dress-boot-text{animation:none;opacity:1}" +
       "}";
     (document.head || document.documentElement).appendChild(style);
   }
@@ -48,11 +40,10 @@
     var loader = document.createElement("div");
     loader.id = ROOT_ID;
     loader.setAttribute("aria-hidden", "true");
-    var mark = (window.DRESS_CONFIG && window.DRESS_CONFIG.mark) || "assets/dress_mark.png";
+    var mark = (window.DRESS_CONFIG && window.DRESS_CONFIG.mark) || "assets/dress_mark.webp";
     loader.innerHTML =
       '<div class="dress-boot-inner">' +
       '<img class="dress-boot-logo" src="' + mark + '" alt="" />' +
-      '<p class="dress-boot-text">Loading</p>' +
       "</div>";
     (document.body || document.documentElement).appendChild(loader);
     return loader;
@@ -76,9 +67,9 @@
   }
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () {
-      navigator.serviceWorker.register((window.DRESS_CONFIG && window.DRESS_CONFIG.sw) || "./sw.js").catch(function () {
-        /* ignore registration errors (e.g. file://) */
+    navigator.serviceWorker.getRegistrations().then(function (registrations) {
+      registrations.forEach(function (registration) {
+        registration.unregister();
       });
     });
   }

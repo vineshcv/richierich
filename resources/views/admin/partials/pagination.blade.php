@@ -1,8 +1,9 @@
-@if ($paginator->hasPages())
+@if ($paginator->total() > 0)
   <nav class="admin-pager" aria-label="Pagination">
     <p class="admin-pager-summary">
       Showing {{ $paginator->firstItem() }} to {{ $paginator->lastItem() }} of {{ $paginator->total() }} results
     </p>
+    @if ($paginator->hasPages())
     <div class="admin-pager-links">
       @if ($paginator->onFirstPage())
         <span class="admin-pager-btn is-disabled" aria-disabled="true">Previous</span>
@@ -31,5 +32,6 @@
         <span class="admin-pager-btn is-disabled" aria-disabled="true">Next</span>
       @endif
     </div>
+    @endif
   </nav>
 @endif
