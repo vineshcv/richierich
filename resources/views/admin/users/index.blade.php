@@ -14,6 +14,7 @@
       <thead>
         <tr>
           <th>Username</th>
+          <th>Email</th>
           <th>Role</th>
           <th>Store</th>
           <th>Phone</th>
@@ -25,6 +26,7 @@
         @forelse($users as $user)
           <tr>
             <td><strong>{{ $user->username }}</strong></td>
+            <td>{{ $user->email && ! str_ends_with($user->email, '@staff.richierich.local') ? $user->email : '—' }}</td>
             <td>{{ $user->role === 'superadmin' ? 'Superadmin' : 'Store admin' }}</td>
             <td>{{ $user->store?->name ?: 'All stores' }}</td>
             <td>{{ $user->phone ?: '—' }}</td>
@@ -41,7 +43,7 @@
             </td>
           </tr>
         @empty
-          <tr><td colspan="6" class="muted">No users yet.</td></tr>
+          <tr><td colspan="7" class="muted">No users yet.</td></tr>
         @endforelse
       </tbody>
     </table>
@@ -54,6 +56,7 @@
           <strong>{{ $user->username }}</strong>
           <span class="badge {{ $user->status === 'active' ? 'badge-success' : 'badge-muted' }}">{{ ucfirst($user->status) }}</span>
           <div class="mobile-item-meta">
+            <span>{{ $user->email && ! str_ends_with($user->email, '@staff.richierich.local') ? $user->email : 'No email' }}</span>
             <span>{{ $user->role === 'superadmin' ? 'Superadmin' : 'Store admin' }}</span>
             <span>{{ $user->store?->name ?: 'All stores' }}</span>
             <span>{{ $user->phone ?: 'No phone' }}</span>

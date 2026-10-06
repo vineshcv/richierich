@@ -99,9 +99,6 @@ class CatalogService
         if (is_array($product->colors) && $product->colors) {
             $specs[] = ['Colors', implode(', ', $product->colors)];
         }
-        if (is_array($product->available_sizes) && $product->available_sizes) {
-            $specs[] = ['Sizes', implode(', ', $product->available_sizes)];
-        }
         if ($product->sku) {
             $specs[] = ['SKU', $product->sku];
         }
@@ -109,9 +106,6 @@ class CatalogService
         $bullets = array_values(array_filter([
             $product->fabric,
             $product->fit,
-            is_array($product->available_sizes) && $product->available_sizes
-                ? 'Sizes: '.implode(', ', $product->available_sizes)
-                : null,
             $tag ?: null,
         ]));
 
@@ -134,7 +128,7 @@ class CatalogService
             'description' => $product->description ?: $short,
             'bullets' => $bullets ?: [$short],
             'specs' => $specs ?: [['Type', $product->category?->name ?? 'Dress']],
-            'sizes' => is_array($product->available_sizes) ? array_values($product->available_sizes) : [],
+            'sizes' => [],
             'colors' => is_array($product->colors) ? array_values($product->colors) : [],
             'stock' => $product->stock,
             'stock_threshold' => $product->stock_threshold,

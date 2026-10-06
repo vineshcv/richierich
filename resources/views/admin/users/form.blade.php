@@ -4,7 +4,7 @@
 
 @section('title', $isEdit ? 'Edit user' : 'Add user')
 @section('heading', $isEdit ? 'Edit user' : 'Add user')
-@section('subheading', 'Username, password, status, and phone. A store admin is limited to one store.')
+@section('subheading', 'Username, email, password, status, and phone. A store admin is limited to one store.')
 @section('actions')
   <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Back</a>
 @endsection
@@ -20,6 +20,16 @@
         <label for="username">Username *</label>
         <input id="username" type="text" name="username" value="{{ old('username', $user->username) }}" required autocomplete="off" />
         @error('username')<div class="error">{{ $message }}</div>@enderror
+      </div>
+
+      <div class="field">
+        <label for="email">Email *</label>
+        @php
+          $storedEmail = (string) ($user->email ?? '');
+          $emailValue = old('email', str_ends_with($storedEmail, '@staff.richierich.local') ? '' : $storedEmail);
+        @endphp
+        <input id="email" type="email" name="email" value="{{ $emailValue }}" required autocomplete="email" />
+        @error('email')<div class="error">{{ $message }}</div>@enderror
       </div>
 
       <div class="field">

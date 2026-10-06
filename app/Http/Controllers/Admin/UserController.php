@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\CurrentStore;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -39,7 +40,6 @@ class UserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validateUser($request);
-        $data['email'] = $data['username'].'@staff.richierich.local';
         $data['name'] = $data['username'];
         User::query()->create($data);
 
@@ -65,9 +65,6 @@ class UserController extends Controller
             unset($data['password']);
         }
         $data['name'] = $data['username'];
-        if (! $user->email || str_ends_with((string) $user->email, '@staff.richierich.local')) {
-            $data['email'] = $data['username'].'@staff.richierich.local';
-        }
         $this->guardLastSuperAdmin($user, $data);
         $user->update($data);
 
@@ -99,6 +96,7 @@ class UserController extends Controller
 
         $data = $request->validate([
             'username' => ['required', 'string', 'min:3', 'max:40', 'regex:/^[A-Za-z0-9._-]+$/', Rule::unique('users', 'username')->ignore($user?->id)],
+            'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')->ignore($user?->id)],
             'password' => [$user ? 'nullable' : 'required', 'string', 'min:8', 'max:100'],
             'phone' => ['nullable', 'string', 'max:20'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
@@ -107,6 +105,7 @@ class UserController extends Controller
         ]);
 
         $data['store_id'] = $data['role'] === 'store_admin' ? ($data['store_id'] ?? null) : null;
+        $data['email'] = Str::lower($data['email']);
 
         return $data;
     }

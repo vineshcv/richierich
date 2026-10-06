@@ -33,6 +33,10 @@ return [
         'secret' => env('RAZORPAY_SECRET'),
     ],
 
+    'orders' => [
+        'notify_email' => env('ORDER_NOTIFY_EMAIL', 'jojiav@gmail.com,vineeshcv88@gmail.com'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

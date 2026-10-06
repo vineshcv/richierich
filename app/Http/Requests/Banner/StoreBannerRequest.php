@@ -22,8 +22,8 @@ class StoreBannerRequest extends FormRequest
     {
         return [
             'title' => ['nullable', 'string', 'max:150'],
-            'image' => ['required', 'image', 'max:1024'], // 1MB
-            'link_url' => ['nullable', 'url', 'max:255'],
+            'image' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192'],
+            'link_url' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active' => ['sometimes', 'boolean'],
         ];
@@ -32,7 +32,8 @@ class StoreBannerRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'image.max' => 'Banner image must be under 1MB.',
+            'image.max' => 'Banner image must be under 8MB.',
+            'image.mimes' => 'Banner image must be a JPG, PNG, WebP, or GIF.',
         ];
     }
 }

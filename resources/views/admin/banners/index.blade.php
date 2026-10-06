@@ -3,7 +3,7 @@
 @section('title', 'Banners')
 @section('heading', 'Banners')
 @section('subheading')
-  Home carousel — 1MB each
+  Home carousel — JPG, PNG, WebP, or GIF, up to 8MB
 @endsection
 
 @section('content')
@@ -26,7 +26,7 @@
             </div>
             <div class="field">
               <label>Link URL</label>
-              <input type="url" name="link_url" value="{{ old('link_url', $banner->link_url) }}" placeholder="https://" />
+              <input type="text" name="link_url" value="{{ old('link_url', $banner->link_url) }}" placeholder="https:// or leave blank" />
             </div>
             <div class="field">
               <label>Sort order</label>
@@ -40,7 +40,7 @@
               </div>
             </div>
             <div class="field full">
-              <label>Replace image (optional, max 1MB)</label>
+              <label>Replace image (optional, max 8MB)</label>
               <input type="file" name="image" accept="image/*" />
             </div>
             <div class="field full actions">
@@ -70,7 +70,7 @@
     </div>
     <div class="field">
       <label for="link_url">Link URL</label>
-      <input id="link_url" type="url" name="link_url" value="{{ old('link_url') }}" placeholder="https://" />
+      <input id="link_url" type="text" name="link_url" value="{{ old('link_url') }}" placeholder="https:// or leave blank" />
     </div>
     <div class="field">
       <label for="sort_order">Sort order</label>
@@ -84,7 +84,7 @@
       </div>
     </div>
     <div class="field full">
-      <label for="image">Image * (max 1MB)</label>
+      <label for="image">Image * (JPG, PNG, WebP, or GIF, max 8MB)</label>
       <input id="image" type="file" name="image" accept="image/*" required />
       @error('image')<div class="error">{{ $message }}</div>@enderror
     </div>

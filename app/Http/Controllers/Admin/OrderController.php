@@ -92,6 +92,7 @@ class OrderController extends Controller
         $data = $request->validate([
             'fulfillment_status' => ['required', Rule::in(['received', 'processing', 'ready', 'shipped'])],
             'tracking_number' => ['nullable', 'required_if:fulfillment_status,shipped', 'string', 'max:80'],
+            'tracking_company' => ['nullable', 'required_if:fulfillment_status,shipped', 'string', 'max:80'],
         ]);
 
         $phone = $order->whatsappPhone();
@@ -100,12 +101,14 @@ class OrderController extends Controller
         }
 
         $tracking = trim((string) ($data['tracking_number'] ?? ''));
+        $company = trim((string) ($data['tracking_company'] ?? ''));
         $order->update([
             'fulfillment_status' => $data['fulfillment_status'],
             'tracking_number' => $data['fulfillment_status'] === 'shipped' ? $tracking : $order->tracking_number,
+            'tracking_company' => $data['fulfillment_status'] === 'shipped' ? $company : $order->tracking_company,
         ]);
 
-        return back()->with('whatsapp_url', 'https://wa.me/'.$phone.'?text='.rawurlencode($this->message($order->fresh(), $data['fulfillment_status'], $tracking)));
+        return back()->with('whatsapp_url', 'https://wa.me/'.$phone.'?text='.rawurlencode($this->message($order->fresh(), $data['fulfillment_status'], $tracking, $company)));
     }
 
     private function rememberPayment(Order $order): void
@@ -125,7 +128,7 @@ class OrderController extends Controller
         ]);
     }
 
-    private function message(Order $order, string $status, string $tracking): string
+    private function message(Order $order, string $status, string $tracking, string $company = ''): string
     {
         $name = $order->customer_name ?: 'there';
         $store = $order->store?->name ?: 'Richie Rich';
@@ -136,7 +139,7 @@ class OrderController extends Controller
             'received' => "Hi {$name}, this is {$store}. We have received your order {$ref} ({$amount}). We will update you as it is prepared.",
             'processing' => "Hi {$name}, your order {$ref} at {$store} is now being processed.",
             'ready' => "Hi {$name}, your order {$ref} at {$store} is ready.",
-            'shipped' => "Hi {$name}, your order {$ref} at {$store} has been shipped. Tracking number: {$tracking}.",
+            'shipped' => "Hi {$name}, your order {$ref} at {$store} has been shipped. {$company} tracking number: {$tracking}.",
             default => "Hi {$name}, an update on your order {$ref} from {$store}.",
         };
     }

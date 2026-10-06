@@ -24,6 +24,7 @@ class Order extends Model
         'payment_details',
         'fulfillment_status',
         'tracking_number',
+        'tracking_company',
         'items',
     ];
 

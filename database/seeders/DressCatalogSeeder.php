@@ -116,7 +116,7 @@ class DressCatalogSeeder extends Seeder
                 'fabric' => $fabric,
                 'fit' => $fit,
                 'colors' => null,
-                'available_sizes' => ['S', 'M', 'L', 'XL'],
+                'available_sizes' => null,
                 'show_price' => true,
                 'price' => $this->parsePrice($item['price'] ?? '0'),
                 'care_instructions' => collect($item['specs'] ?? [])->first(fn ($s) => is_array($s) && Str::lower($s[0] ?? '') === 'care')[1] ?? 'Gentle wash. Dry in shade.',

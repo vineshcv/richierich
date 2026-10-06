@@ -124,7 +124,7 @@
       lines.push(idx + 1 + ". " + item.name + " × " + item.qty + (price ? " — " + price : ""));
     });
     lines.push("");
-    lines.push("Please confirm availability, sizes and total.");
+    lines.push("Please confirm availability and total.");
     lines.push("Thank you.");
     window.open(
       "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(lines.join("\n")),

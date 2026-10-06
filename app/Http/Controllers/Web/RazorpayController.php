@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderPlacedMail;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class RazorpayController extends Controller
@@ -195,6 +197,8 @@ class RazorpayController extends Controller
     {
         $current = $request->user();
         if ($current) {
+            $this->syncCustomerEmail($current, $shipping['email']);
+
             return $current->id;
         }
 
@@ -224,6 +228,24 @@ class RazorpayController extends Controller
         $request->session()->regenerate();
 
         return $user->id;
+    }
+
+    private function syncCustomerEmail(User $user, string $email): void
+    {
+        if ($user->role !== 'customer') {
+            return;
+        }
+
+        $email = Str::lower(trim($email));
+        if ($email === '' || $user->email === $email) {
+            return;
+        }
+
+        if (User::query()->where('email', $email)->whereKeyNot($user->id)->exists()) {
+            return;
+        }
+
+        $user->update(['email' => $email]);
     }
 
     public function verify(Request $request): JsonResponse
@@ -261,9 +283,34 @@ class RazorpayController extends Controller
             ]);
         }
 
+        $this->notifyStore($orders);
+
         return response()->json([
             'message' => 'Payment received.',
             'order_id' => $data['razorpay_order_id'],
         ]);
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<int, Order>  $orders
+     */
+    private function notifyStore($orders): void
+    {
+        $recipients = collect(preg_split('/\s*,\s*/', (string) config('services.orders.notify_email')) ?: [])
+            ->map(fn (string $email) => strtolower(trim($email)))
+            ->filter(fn (string $email) => filter_var($email, FILTER_VALIDATE_EMAIL))
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($recipients === [] || $orders->isEmpty()) {
+            return;
+        }
+
+        try {
+            Mail::to($recipients)->send(new OrderPlacedMail($orders));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 }

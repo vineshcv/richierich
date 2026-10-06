@@ -43,6 +43,12 @@
       <label>Phone</label>
       <div>{{ $order->phone ?: '—' }}</div>
     </div>
+    @if($order->tracking_company)
+      <div class="field">
+        <label>Tracking company</label>
+        <div>{{ $order->tracking_company }}</div>
+      </div>
+    @endif
     @if($order->tracking_number)
       <div class="field">
         <label>Tracking number</label>
@@ -116,6 +122,7 @@
   <p class="muted" style="margin-top:0;">Opens WhatsApp with a message to the customer. The status is saved on this order.</p>
   @error('phone')<div class="error">{{ $message }}</div>@enderror
   @error('tracking_number')<div class="error">{{ $message }}</div>@enderror
+  @error('tracking_company')<div class="error">{{ $message }}</div>@enderror
 
   @if($order->whatsappPhone())
     <div class="order-wa-actions">
@@ -132,8 +139,12 @@
       @csrf
       <input type="hidden" name="fulfillment_status" value="shipped" />
       <div class="field">
+        <label for="tracking_company">Tracking company</label>
+        <input id="tracking_company" type="text" name="tracking_company" value="{{ old('tracking_company', $order->tracking_company) }}" placeholder="Delhivery, India Post, DTDC…" required />
+      </div>
+      <div class="field">
         <label for="tracking_number">Tracking number</label>
-        <input id="tracking_number" type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}" placeholder="Enter tracking number" />
+        <input id="tracking_number" type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}" placeholder="Enter tracking number" required />
       </div>
       <button type="submit" class="btn btn-primary">Order shipped</button>
     </form>

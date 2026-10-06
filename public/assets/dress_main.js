@@ -139,7 +139,7 @@ function buildProductEnquiry(name, price, extra) {
     "",
     "Could you please confirm:",
     "• Availability",
-    "• Current price / size options",
+    "• Current price",
     "",
     "Thank you.",
   ];
@@ -1243,6 +1243,9 @@ function openProductSheet(id) {
     })
     .join("");
   var specs = (product.specs || [])
+    .filter(function (row) {
+      return row && String(row[0] || "").toLowerCase() !== "sizes";
+    })
     .map(function (row) {
       return "<li><span>" + row[0] + "</span><span>" + row[1] + "</span></li>";
     })
@@ -1580,18 +1583,6 @@ function renderProductDetailPage(id) {
   (product.specs || []).forEach(function (row) {
     if (row && row[0]) specMap[row[0]] = row[1];
   });
-  var sizeList = (product.sizes && product.sizes.length ? product.sizes : ["S", "M", "L", "XL"]).slice();
-  var sizeBtns = sizeList
-    .map(function (s, i) {
-      return (
-        '<button type="button" class="detail-size' +
-        (i === 0 ? " is-active" : "") +
-        '">' +
-        String(s).replace(/</g, "&lt;") +
-        "</button>"
-      );
-    })
-    .join("");
   var brand = product.brand || "Richierich";
   var sku = specMap.SKU || "";
   var pageUrl = product.url || window.location.href;
@@ -1654,13 +1645,6 @@ function renderProductDetailPage(id) {
     (product.price ? '<div class="detail-price">' + detailText(product.price) + "</div>" : "") +
     '<span class="detail-stock' + stockLabel(product).cls + '">' + stockLabel(product).text + "</span>" +
     "</div>" +
-    '<div class="detail-size-head"><span>Sizes</span><button type="button" class="detail-size-guide">Size guide</button></div>' +
-    '<div class="detail-sizes">' +
-    sizeBtns +
-    "</div>" +
-    '<p class="detail-size-note" hidden>Available in ' +
-    detailText(sizeList.join(", ")) +
-    ". Message us if you need help with fit.</p>" +
     '<div class="detail-buy">' +
     (productStock(product) === 0
       ? '<button type="button" class="btn btn-primary detail-add" disabled>Out of stock</button>'
@@ -1712,20 +1696,6 @@ function renderProductDetailPage(id) {
   if (zoomBtn) {
     zoomBtn.addEventListener("click", function () {
       openZoomLightbox(gallery, galleryIndex);
-    });
-  }
-  root.querySelectorAll(".detail-size").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      root.querySelectorAll(".detail-size").forEach(function (b) {
-        b.classList.toggle("is-active", b === btn);
-      });
-    });
-  });
-  var guide = root.querySelector(".detail-size-guide");
-  var note = root.querySelector(".detail-size-note");
-  if (guide && note) {
-    guide.addEventListener("click", function () {
-      note.hidden = !note.hidden;
     });
   }
   root.querySelectorAll("[data-qty-step]").forEach(function (btn) {
