@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Mail\OrderPlacedMail;
 use App\Models\Order;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -105,7 +106,17 @@ class OrderAndUserEmailTest extends TestCase
             'services.orders.notify_email' => 'jojiav@gmail.com,vineeshcv88@gmail.com',
         ]);
 
+        $store = Store::query()->create(['name' => 'Richie Rich']);
+        User::factory()->create([
+            'role' => 'store_admin',
+            'username' => 'storemail',
+            'status' => 'active',
+            'store_id' => $store->id,
+            'email' => 'store.lead@example.com',
+        ]);
+
         Order::query()->create([
+            'store_id' => $store->id,
             'razorpay_order_id' => 'order_paid_1',
             'customer_name' => 'Meera Nair',
             'email' => 'meera@example.com',
@@ -133,6 +144,7 @@ class OrderAndUserEmailTest extends TestCase
         Mail::assertSent(OrderPlacedMail::class, function (OrderPlacedMail $mail): bool {
             return $mail->hasTo('jojiav@gmail.com')
                 && $mail->hasTo('vineeshcv88@gmail.com')
+                && $mail->hasTo('store.lead@example.com')
                 && $mail->orders->first()?->email === 'meera@example.com';
         });
     }

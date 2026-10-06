@@ -296,21 +296,46 @@ class RazorpayController extends Controller
      */
     private function notifyStore($orders): void
     {
-        $recipients = collect(preg_split('/\s*,\s*/', (string) config('services.orders.notify_email')) ?: [])
-            ->map(fn (string $email) => strtolower(trim($email)))
-            ->filter(fn (string $email) => filter_var($email, FILTER_VALIDATE_EMAIL))
-            ->unique()
-            ->values()
-            ->all();
-
-        if ($recipients === [] || $orders->isEmpty()) {
+        if ($orders->isEmpty()) {
             return;
         }
 
-        try {
-            Mail::to($recipients)->send(new OrderPlacedMail($orders));
-        } catch (\Throwable $e) {
-            report($e);
+        foreach ($orders->groupBy(fn (Order $order) => (int) ($order->store_id ?? 0)) as $storeId => $storeOrders) {
+            $recipients = $this->orderRecipients((int) $storeId);
+            if ($recipients === []) {
+                continue;
+            }
+
+            try {
+                Mail::to($recipients)->send(new OrderPlacedMail($storeOrders->values()));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function orderRecipients(int $storeId): array
+    {
+        $configured = collect(preg_split('/\s*,\s*/', (string) config('services.orders.notify_email')) ?: []);
+
+        $storeEmails = $storeId > 0
+            ? User::query()
+                ->where('role', 'store_admin')
+                ->where('status', 'active')
+                ->where('store_id', $storeId)
+                ->pluck('email')
+            : collect();
+
+        return $configured
+            ->merge($storeEmails)
+            ->map(fn ($email) => strtolower(trim((string) $email)))
+            ->filter(fn (string $email) => filter_var($email, FILTER_VALIDATE_EMAIL) === $email)
+            ->reject(fn (string $email) => str_ends_with($email, '@staff.richierich.local'))
+            ->unique()
+            ->values()
+            ->all();
     }
 }
