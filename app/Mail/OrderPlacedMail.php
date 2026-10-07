@@ -33,6 +33,7 @@ class OrderPlacedMail extends Mailable
         }
 
         return new Envelope(
+            from: new Address((string) config('mail.from.address'), 'Richie Rich'),
             subject: 'New Richierich order from '.$name,
             replyTo: $replyTo,
         );

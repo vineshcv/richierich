@@ -34,7 +34,7 @@ return [
     ],
 
     'orders' => [
-        'notify_email' => env('ORDER_NOTIFY_EMAIL', 'jojiav@gmail.com,vineeshcv88@gmail.com'),
+        'notify_email' => env('ORDER_NOTIFY_EMAIL', 'jojiav@gmail.com'),
     ],
 
     'slack' => [

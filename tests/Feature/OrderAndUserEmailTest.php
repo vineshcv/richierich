@@ -103,7 +103,7 @@ class OrderAndUserEmailTest extends TestCase
         config([
             'services.razorpay.key' => '',
             'services.razorpay.secret' => 'testsecret',
-            'services.orders.notify_email' => 'jojiav@gmail.com,vineeshcv88@gmail.com',
+            'services.orders.notify_email' => 'jojiav@gmail.com',
         ]);
 
         $store = Store::query()->create(['name' => 'Richie Rich']);
@@ -142,9 +142,9 @@ class OrderAndUserEmailTest extends TestCase
         ]);
 
         Mail::assertSent(OrderPlacedMail::class, function (OrderPlacedMail $mail): bool {
-            return $mail->hasTo('jojiav@gmail.com')
-                && $mail->hasTo('vineeshcv88@gmail.com')
-                && $mail->hasTo('store.lead@example.com')
+            return $mail->hasBcc('jojiav@gmail.com')
+                && $mail->hasBcc('store.lead@example.com')
+                && ! $mail->hasTo('vineeshcv88@gmail.com')
                 && $mail->orders->first()?->email === 'meera@example.com';
         });
     }

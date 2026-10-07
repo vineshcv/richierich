@@ -307,7 +307,7 @@ class RazorpayController extends Controller
             }
 
             try {
-                Mail::to($recipients)->send(new OrderPlacedMail($storeOrders->values()));
+                Mail::bcc($recipients)->send(new OrderPlacedMail($storeOrders->values()));
             } catch (\Throwable $e) {
                 report($e);
             }
