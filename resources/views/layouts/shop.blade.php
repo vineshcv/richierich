@@ -118,7 +118,7 @@
     </div>
   </footer>
 
-  <script src="{{ asset('assets/dress_main.js') }}?v=85"></script>
+  <script src="{{ asset('assets/dress_main.js') }}?v=86"></script>
   <script src="{{ asset('assets/dress_cart.js') }}?v=9"></script>
   @stack('scripts')
   <script src="{{ asset('assets/azores_share.js') }}?v=4"></script>

@@ -24,7 +24,6 @@ class OrderController extends Controller
         $storeId = $this->current->adminId();
         $filters = $request->validate([
             'q' => ['nullable', 'string', 'max:120'],
-            'status' => ['nullable', Rule::in(['pending', 'paid', 'cancelled'])],
             'fulfillment' => ['nullable', Rule::in(['none', 'received', 'processing', 'ready', 'shipped'])],
             'payment_method' => ['nullable', Rule::in(['card', 'upi', 'netbanking', 'wallet', 'emi', 'paylater'])],
             'from' => ['nullable', 'date'],
@@ -40,6 +39,7 @@ class OrderController extends Controller
         $search = trim((string) ($filters['q'] ?? ''));
 
         $orders = Order::query()
+            ->where('status', 'paid')
             ->when($storeId, fn ($query) => $query->where('store_id', $storeId))
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($inner) use ($search) {
@@ -49,7 +49,6 @@ class OrderController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
-            ->when(! empty($filters['status']), fn ($query) => $query->where('status', $filters['status']))
             ->when(($filters['fulfillment'] ?? null) === 'none', fn ($query) => $query->whereNull('fulfillment_status'))
             ->when(in_array($filters['fulfillment'] ?? null, ['received', 'processing', 'ready', 'shipped'], true), fn ($query) => $query->where('fulfillment_status', $filters['fulfillment']))
             ->when(! empty($filters['payment_method']), fn ($query) => $query->where('payment_method', $filters['payment_method']))
@@ -78,6 +77,7 @@ class OrderController extends Controller
     public function show(Order $order): View
     {
         abort_unless($this->current->owns($order), 404);
+        abort_unless($order->status === 'paid', 404);
         $this->rememberPayment($order);
 
         return view('admin.orders.show', [
@@ -88,6 +88,7 @@ class OrderController extends Controller
     public function whatsapp(Request $request, Order $order): RedirectResponse
     {
         abort_unless($this->current->owns($order), 404);
+        abort_unless($order->status === 'paid', 404);
 
         $data = $request->validate([
             'fulfillment_status' => ['required', Rule::in(['received', 'processing', 'ready', 'shipped'])],

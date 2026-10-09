@@ -50,9 +50,9 @@
       </div>
     </div>
     <div class="category-carousel">
-      <button type="button" class="category-carousel-btn prev" id="category-prev" aria-label="Previous categories">‹</button>
+      <button type="button" class="category-carousel-btn prev" id="category-prev" aria-label="Previous categories" hidden>‹</button>
       <div class="category-grid" id="category-grid"></div>
-      <button type="button" class="category-carousel-btn next" id="category-next" aria-label="Next categories">›</button>
+      <button type="button" class="category-carousel-btn next" id="category-next" aria-label="Next categories" hidden>›</button>
     </div>
   </div>
 </section>

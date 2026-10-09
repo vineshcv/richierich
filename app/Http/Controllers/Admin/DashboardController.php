@@ -20,7 +20,7 @@ class DashboardController extends Controller
             'productCount' => Product::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
             'bannerCount' => Banner::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
             'categoryCount' => $categories->search()->count(),
-            'orderCount' => Order::query()->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
+            'orderCount' => Order::query()->where('status', 'paid')->when($storeId, fn ($q) => $q->where('store_id', $storeId))->count(),
         ]);
     }
 }

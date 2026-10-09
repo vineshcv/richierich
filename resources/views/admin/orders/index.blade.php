@@ -14,22 +14,13 @@
 
       return request()->fullUrlWithQuery(['sort' => $column, 'dir' => $next, 'page' => null]);
   };
-  $filtering = request()->hasAny(['q', 'status', 'fulfillment', 'payment_method', 'from', 'to']);
+  $filtering = request()->hasAny(['q', 'fulfillment', 'payment_method', 'from', 'to']);
 @endphp
 <div class="card">
   <form method="GET" action="{{ route('admin.orders.index') }}" class="order-filters">
     <div class="field">
       <label for="q">Search</label>
       <input id="q" type="search" name="q" value="{{ request('q') }}" placeholder="Name, phone, email, order id" />
-    </div>
-    <div class="field">
-      <label for="status">Payment status</label>
-      <select id="status" name="status">
-        <option value="">All</option>
-        @foreach(['paid' => 'Paid', 'pending' => 'Pending', 'cancelled' => 'Cancelled'] as $value => $label)
-          <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
-        @endforeach
-      </select>
     </div>
     <div class="field">
       <label for="fulfillment">Order status</label>

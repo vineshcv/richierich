@@ -97,6 +97,44 @@ class OrderAndUserEmailTest extends TestCase
         $this->assertSame('TRK123', $order->tracking_number);
     }
 
+    public function test_order_list_shows_only_paid_orders(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'superadmin',
+            'username' => 'orderboss',
+            'status' => 'active',
+        ]);
+
+        Order::query()->create([
+            'razorpay_order_id' => 'order_paid_visible',
+            'customer_name' => 'Paid Customer',
+            'email' => 'paid@example.com',
+            'phone' => '9876543210',
+            'amount' => 100000,
+            'currency' => 'INR',
+            'status' => 'paid',
+        ]);
+        $pending = Order::query()->create([
+            'razorpay_order_id' => 'order_pending_hidden',
+            'customer_name' => 'Pending Customer',
+            'email' => 'pending@example.com',
+            'phone' => '9876543211',
+            'amount' => 100000,
+            'currency' => 'INR',
+            'status' => 'pending',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.index'))
+            ->assertOk()
+            ->assertSee('Paid Customer')
+            ->assertDontSee('Pending Customer');
+
+        $this->actingAs($admin)
+            ->get(route('admin.orders.show', $pending))
+            ->assertNotFound();
+    }
+
     public function test_paid_order_emails_the_store_and_keeps_the_customer_email(): void
     {
         Mail::fake();

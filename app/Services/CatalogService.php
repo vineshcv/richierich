@@ -41,9 +41,6 @@ class CatalogService
             ->values()
             ->all();
 
-        // Ensure all catalog JSON categories appear even if DB seed missed some
-        $categories = $this->mergeMissingCategories($categories);
-
         $products = Product::query()
             ->with(['category', 'images', 'store'])
             ->where('status', 'active')
@@ -224,35 +221,6 @@ class CatalogService
         }
 
         return null;
-    }
-
-    /**
-     * @param  list<array<string, mixed>>  $categories
-     * @return list<array<string, mixed>>
-     */
-    private function mergeMissingCategories(array $categories): array
-    {
-        $have = [];
-        foreach ($categories as $c) {
-            $have[$c['id']] = true;
-        }
-
-        foreach ($this->catalog()['categories'] ?? [] as $item) {
-            $id = $this->normalizeCategoryId($item['id'] ?? '');
-            if ($id === '' || isset($have[$id])) {
-                continue;
-            }
-            $img = isset($item['image']) ? basename(explode('?', $item['image'])[0]) : null;
-            $categories[] = [
-                'id' => $id,
-                'name' => $item['name'] ?? $id,
-                'desc' => $item['desc'] ?? '',
-                'image' => $this->mediaUrl(null, $img),
-            ];
-            $have[$id] = true;
-        }
-
-        return $categories;
     }
 
     /**

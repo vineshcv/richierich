@@ -770,7 +770,11 @@ function initCategoryCarousel() {
   var next = document.getElementById("category-next");
   if (!rail || rail.getAttribute("data-carousel") === "1") return;
   var count = rail.children.length;
-  if (count < 2) return;
+  if (count < 2 || rail.scrollWidth <= rail.clientWidth + 2) {
+    if (prev) prev.hidden = true;
+    if (next) next.hidden = true;
+    return;
+  }
   rail.setAttribute("data-carousel", "1");
 
   Array.prototype.forEach.call(Array.prototype.slice.call(rail.children), function (card) {
@@ -1125,7 +1129,11 @@ function renderCatalog() {
       '<button type="button" class="filter-chip' +
       (active === "all" ? " is-active" : "") +
       '" data-cat="all">All</button>' +
-      DRESS_CATEGORIES.map(function (c) {
+      DRESS_CATEGORIES.filter(function (c) {
+        return (window.DRESS_PRODUCTS || []).some(function (p) {
+          return p.category === c.id;
+        });
+      }).map(function (c) {
         return (
           '<button type="button" class="filter-chip' +
           (active === c.id ? " is-active" : "") +
