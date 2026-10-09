@@ -101,7 +101,6 @@
       <div class="footer-col">
         <h4>Contact</h4>
         <ul>
-          <li>Ground Floor, Selex Mall, Anjangadi, Thrissur East, PIN 680005</li>
           @php $wa = \App\Models\Store::siteWhatsapp(); @endphp
           @if(($settings->show_whatsapp ?? true) && $wa)
             <li><a href="https://wa.me/{{ $wa }}" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
