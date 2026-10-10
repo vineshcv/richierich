@@ -27,7 +27,7 @@
     <div class="breadcrumb">
       <a href="{{ route('home') }}">Home</a><span>›</span><span>Contact</span>
     </div>
-    <h1>Contact Richierich</h1>
+    <h1>Contact Richie Rich</h1>
   </div>
 </section>
 
